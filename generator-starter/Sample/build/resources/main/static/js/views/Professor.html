@@ -1,0 +1,193 @@
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+
+
+<html lang="en-us" style="height:100%;" dir="ltr">
+  <head>
+    <title>Table - Using ko.observableArray</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../css/images/rice.ico">
+    <link rel="apple-touch-icon-precomposed" href="../css/images/touchicon.png">
+    <meta name="apple-mobile-web-app-title" content="Oracle JET">
+    <link rel="stylesheet" id="css" href="css/libs/oj/v5.0.0/alta/oj-alta-min.css">
+    <link rel="stylesheet" href="css/demo-alta-site-min.css">
+    <script>
+      // The "oj_whenReady" global variable enables a strategy that the busy context whenReady,
+      // will implicitly add a busy state, until the application calls applicationBootstrapComplete
+      // on the busy state context.
+      window["oj_whenReady"] = true;
+    </script>
+    <!--<script src="http://www.oracle.com/webfolder/technetwork/jet/js/libs/require/require.js"></script>-->
+    <!--&lt;!&ndash; RequireJS bootstrap file &ndash;&gt;-->
+    <!--<script src="../js/main.js"></script>-->
+    <!--<script src="../js/appController.js"></script>-->
+  </head>
+  <body class="demo-disable-bg-image">
+    <div id="sampleDemo" style="width: 90%; margin: 20px auto;" style="" class="demo-padding demo-container">
+      <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+        
+        <div id="tableDemo" class="oj-flex oj-flex-items-pad">
+            <div class="oj-xl-12 oj-lg-12 oj-md-12 oj-flex-item">
+
+                <div class="oj-flex oj-sm-justify-content-flex-start" style="font-size: 2.5em; margin-bottom: 25px; margin-left: 8px">
+                    Professor
+                </div>
+
+
+                <div class="oj-flex oj-sm-justify-content-flex-end">
+                    <oj-button id='addbutton' on-oj-action='[[addButtonClick]]' class='oj-button-primary'>
+                        <span slot='endIcon' class="oj-fwk-icon oj-fwk-icon-next"></span>
+                        Add
+                    </oj-button>
+                </div>
+
+
+                <div id="pagingControlDemo">
+
+                <oj-table id="table" aria-label="Professor Table"
+                         on-current-row-changed="[[currentRowListener]]"
+                                            data='[[dataprovider]]'
+                                            columns-default='{"sortable": "disabled"}' 
+
+
+                                            columns='{{columnArray}}'
+
+
+                                            style='width: 100%; height:100%;'>
+                </oj-table>
+
+                      <oj-paging-control id="paging" data='[[dataprovider]]' page-size='4' slot='bottom'></oj-paging-control>
+
+                </div>
+
+                <script type="text/html" id="button_tmpl">
+                    <td>
+                        <oj-button display='icons' class='oj-button-sm demo-button-lightblue' 
+
+                                data-bind="click: $parent.editButtonClick, attr:{id: 'table_button' + $context.cellContext.status.rowIndex}"
+                        >
+                            <span slot='startIcon' class="demo-edit-icon-24 demo-icon-font-24"></span>
+
+
+                        </oj-button>
+
+                        <oj-button display='icons' class='oj-button-sm demo-button-error' 
+
+                                data-bind="click: $parent.removeRow, attr:{id: 'table_del_button' + $context.cellContext.status.rowIndex}"
+                        >
+                            <span slot='startIcon' class="demo-garbage-icon-24 demo-icon-font-24"></span>
+
+                        </oj-button>
+                    </td>
+                </script>
+
+            </div>
+ 
+        </div>
+
+        
+      </div>
+    </div>
+
+        <div id="dialogWrapper">
+        <oj-dialog style="display:none; width: 50vw; height: 75vh;" id="modalDialog1" cancel-behavior='none'>
+
+            <div slot="header">
+
+                <span id="infoIcon" class="oj-message-status-icon oj-message-info-icon" style="float:left; margin-right: 10px"></span>
+              <span id="dialogTitleId" class="oj-dialog-title">
+                  Edit Professor Record
+              </span>
+            </div>
+                <div slot="body">
+
+            <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-5 oj-md-labels-inline">
+                <div class="oj-flex oj-flex-items-pad">
+                    <div class="oj-flex-item deprecated-col-default-width">
+                        <oj-label for="ProfessorIdInput">Professor Id</oj-label>
+                    </div>
+                    <div class="oj-flex-item deprecated-col-default-width">
+                        <oj-input-number id="ProfessorIdInput" min="0" step="1"
+                                         value="{{inputProfessorId}}" readonly></oj-input-number>
+                    </div>
+                </div>
+
+                                                    
+                <div class="oj-flex oj-flex-items-pad">
+                    <div class="oj-flex-item deprecated-col-default-width">
+                      <oj-label for="ProfessorfirstNameInput" 
+
+                                              
+                      >Professor firstName</oj-label>
+                    </div>
+                    <div class="oj-flex-item deprecated-col-default-width">
+                      <oj-input-text id="ProfessorfirstNameInput" value="{{inputProfessorfirstName}}"  
+
+                      
+                     
+                      > 
+                      </oj-input-text>
+                    </div>
+                </div>
+                                  
+                <div class="oj-flex oj-flex-items-pad">
+                    <div class="oj-flex-item deprecated-col-default-width">
+                      <oj-label for="ProfessorlastNameInput" 
+
+                                              
+                      >Professor lastName</oj-label>
+                    </div>
+                    <div class="oj-flex-item deprecated-col-default-width">
+                      <oj-input-text id="ProfessorlastNameInput" value="{{inputProfessorlastName}}"  
+
+                      
+                     
+                      > 
+                      </oj-input-text>
+                    </div>
+                </div>
+              
+
+
+
+            </div>
+            </div>
+
+            <div slot="footer">
+                <oj-button id="cancelButton" data-bind="click: function() {
+                           document.querySelector('#modalDialog1').close();
+                }">
+                    <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-cross"></span>
+
+                    Cancel
+                </oj-button>
+
+                <oj-button id="editOrAddButton" class="oj-button-primary" on-oj-action='[[closeDialog]]'>
+                    <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-checkmark"></span>
+
+
+                    <span id='buttontext'>Button text!</span>
+                </oj-button>
+
+            </div>
+        </oj-dialog>
+
+    </div>
+
+  </body>
+</html>

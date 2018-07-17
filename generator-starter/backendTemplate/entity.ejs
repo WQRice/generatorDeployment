@@ -1,0 +1,80 @@
+<%var requirePara={'jpa:mi':true,'jpa:ma':true,'jpa:dmi':true,'jpa:dma':true};
+var map={'jpa:nb':'@NotBlank','jpa:nn':'@NotNull','jpa:mi':'@Min','jpa:ma':'@Max','jpa:dmi':'@DecimalMin','jpa:dma':'@DecimalMax'};
+var type={'java.sql.Date':'Date'}
+-%>
+package OITWeb.<%-PACKAGENAME%>.model;
+
+import com.fasterxml.jackson.annotation.*;
+import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@Entity   
+@Table(name = "<%-CLASSNAME%>")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@EntityListeners(AuditingEntityListener.class)
+@JsonIdentityInfo(
+generator = ObjectIdGenerators.PropertyGenerator.class,
+property = "id")
+
+public class <%-CLASSNAME%> implements Serializable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+        
+<%for(var j in BASIC){
+		if(BASIC[j]['jpa:bv']!=undefined){
+			for(var k in BASIC[j]['jpa:bv'][0]){-%>
+	<%-k in requirePara ?map[k]+'('+BASIC[j]['jpa:bv'][0][k][0]['$']['v']+')':map[k]%>
+<%			}-%>
+<%		}-%>
+-%>
+<%		if(BASIC[j]['$']['attribute-type']=='java.sql.Date'){-%>
+	@Column(nullable = false)
+	@JsonFormat(pattern = "yyyy-mm-dd")
+<%		}-%>
+	private <%-type[BASIC[j]['$']['attribute-type']]==undefined ?BASIC[j]['$']['attribute-type']:type[BASIC[j]['$']['attribute-type']]%> <%-BASIC[j]['$']['name']-%>;
+
+<%	}-%>
+<%if(ONETOMANY!=undefined){
+	for(var j in ONETOMANY){-%>
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	private List<<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>> <%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>In<%-CLASSNAME%>=new ArrayList<<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>>();
+
+<%	}-%>
+<%}-%>
+<%if(ONETOONE!=undefined){
+		for(var j in ONETOONE){-%>
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	private <%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>In<%-CLASSNAME%>;
+
+<%	}-%>
+<%}-%>
+<%if(MANYTOMANY!=undefined){
+		for(var j in MANYTOMANY){-%>
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	private List<<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>> <%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>In<%-CLASSNAME%>=new ArrayList<<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>>();
+
+<%	}-%>
+<%}-%>
+<%if(MANYTOONE!=undefined){
+		for(var j in MANYTOONE){-%>
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	private <%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>In<%-CLASSNAME%>;
+
+<%	}-%>
+<%}-%>
+}

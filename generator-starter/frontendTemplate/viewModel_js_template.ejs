@@ -1,0 +1,325 @@
+
+
+<%
+var labelMap = {};
+for (var j in BASIC) {
+  if (BASIC[j]['$']['uil']!=undefined) {
+  labelMap[BASIC[j]['$']['name']] = BASIC[j]['$']['uil'];
+} else {labelMap[BASIC[j]['$']['name']] = CLASSNAME +" "+BASIC[j]['$']['name']; }
+}
+
+-%>
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * <%=CLASSNAME%> Table module
+ */
+define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'promise', 'ojs/ojinputtext', 'ojs/ojinputnumber', 'ojs/ojtable', 'ojs/ojarraydataprovider', 'ojs/ojlabel', 'ojs/ojdialog',
+        'ojs/ojdatetimepicker', 'ojs/ojpagingcontrol', 'ojs/ojpagingtabledatasource', 'ojs/ojarraytabledatasource', 'ojs/ojselectcombobox'],
+function(oj, ko, $)
+{   
+  function viewModel() {
+      var self = this;
+      //
+
+          self.<%=CLASSNAME%>ObservableArray = ko.observableArray();
+
+
+      $.get('http://localhost:8080/api/<%=CLASSNAME%>',function(data) {
+          //alert(data);
+          //console.log(data);
+          //console.log(self.deptObservableArray());
+
+          //self.deptObservableArray([]);
+          //console.log(self.deptObservableArray().length);
+
+
+          for (var i = 0; i < data.length; i++) {
+              console.log("add data");
+
+              self.<%=CLASSNAME%>ObservableArray.push({
+
+              '<%=CLASSNAME%>_Id': data[i].id,
+
+              <%for(var j=0; j<BASIC.length-1; j++){%>
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': data[i].<%=BASIC[j]['$']['name']%>,-%>
+            <%}%>                                                                                   
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': data[i].<%=BASIC[j]['$']['name']%>
+              });
+          }
+      });
+
+  
+
+      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.<%=CLASSNAME%>ObservableArray, {idAttribute: '<%=CLASSNAME%>_Id'}));
+
+      self.columnArray = [
+                                            
+            {"headerText": "<%=CLASSNAME%> Id", "field": "<%=CLASSNAME%>_Id", "headerStyle": 'font-weight:bold'},
+                  <%for(var j=0; j<BASIC.length; j++){%>
+                    {"headerText": "<%=labelMap[BASIC[j]['$']['name']]%>", "field": "<%=CLASSNAME+"_"+BASIC[j]['$']['name']%>", "headerStyle": 'font-weight:bold'},
+                 <%}%>
+
+          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align": right"}
+
+          ];
+
+
+      self.editButtonClick = function(data, event){
+          //alert(DepartmentId);
+          self.editOrAdd("edit");
+          document.getElementById("buttontext").innerHTML = 'Update';
+          document.getElementById("dialogTitleId").innerHTML = 'Edit <%=CLASSNAME%> Record';
+          
+          document.querySelector('#modalDialog1').open();
+
+          return true;
+      };
+
+
+     self.closeDialog = function() {
+
+         var elementArray = [];
+
+          <%for(var j=0; j<BASIC.length; j++){-%>
+           
+                elementArray.push(document.getElementById("<%=CLASSNAME%><%=BASIC[j]['$']['name']%>Input"));
+
+          <%}%>
+
+          var invalidflag=false;
+          for (var i=0; i<elementArray.length; i++) {
+              if (!(elementArray[i].valid === "valid")) {
+                  elementArray[i].showMessages();
+                  if (invalidflag==false) invalidflag = true;
+              }
+          }
+
+
+          //proceed to add or update record only if all input fields are valid
+          if(invalidflag==false) {
+
+          // if it is a adding action, do POST
+
+              if (self.editOrAdd() == "add") {
+                  self.addRow();
+              }
+
+
+              // if it is during an Editing action, do PUT
+
+              if (self.editOrAdd() == "edit") {
+                  // alert('updating');
+
+                  self.updateRow();
+
+              }
+
+              //closing dialog window
+              // alert('closing dialog');
+              document.querySelector('#modalDialog1').close();
+          }
+      };
+
+
+      self.addButtonClick = function () {
+
+          //
+          self.editOrAdd("add");
+
+          document.getElementById("buttontext").innerHTML = 'Add';
+          document.getElementById("dialogTitleId").innerHTML = 'Add <%=CLASSNAME%> Record';
+
+
+          //clear up input fields
+          self.input<%=CLASSNAME%>Id(null);
+          <%for(var j=0; j<BASIC.length; j++){-%>
+            self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']%>(null);
+          <%}-%>
+
+
+          document.querySelector('#modalDialog1').open();
+          return true;
+
+
+
+      };
+
+      //add to the observableArray
+      self.addRow = function () {
+          var <%=CLASSNAME%> = {
+              '<%=CLASSNAME%>_Id': self.input<%=CLASSNAME%>Id(),
+              <%for(var j=0; j<BASIC.length-1; j++){%>
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']%>(),-%>
+              <%}%>
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']%>()          
+            };
+
+          var <%=CLASSNAME%>2database = $.ajax({
+              type: "POST",
+              contentType: 'application/json',
+              url: "http://localhost:8080/api/<%=CLASSNAME%>",
+              data: JSON.stringify(
+                  {
+              'Id': self.input<%=CLASSNAME%>Id(),
+              <%for(var j=0; j<BASIC.length-1; j++){%>
+              '<%=BASIC[j]['$']['name']%>': self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']-%>(),-%>
+              <%}%>
+              '<%=BASIC[j]['$']['name']%>': self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']%>()
+
+                  }),
+              dataType: "json",
+              success: function (returndata) {
+                  console.log(returndata);
+                  self.<%=CLASSNAME%>ObservableArray.push(
+                      {
+
+             '<%=CLASSNAME%>_Id': returndata.id,
+
+              <%for(var j=0; j<BASIC.length-1; j++){%>
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': returndata.<%=BASIC[j]['$']['name']%>,-%>
+            <%}%>                                                                                   
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': returndata.<%=BASIC[j]['$']['name']%>
+                   
+                      });
+                  console.log('length' + self.<%=CLASSNAME%>ObservableArray().length);
+
+              }
+          });
+
+
+      };
+
+
+      //used to update the fields based on the selected row
+      self.updateRow = function () {
+          var element = document.getElementById('table');
+          var currentRow = element.currentRow;
+
+          if (currentRow != null) {
+              // DO PUT
+              $.ajax({
+                  type: "PUT",
+                  contentType: 'application/json; charset=utf-8',
+                  url: "http://localhost:8080/api/<%=CLASSNAME%>/" + self.input<%=CLASSNAME%>Id(),
+                  data: JSON.stringify(
+                      {
+               'Id': self.input<%=CLASSNAME%>Id(),
+              <%for(var j=0; j<BASIC.length-1; j++){%>
+              '<%=BASIC[j]['$']['name']%>': self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']-%>(),-%>
+              <%}%>
+              '<%=BASIC[j]['$']['name']%>': self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']%>()
+                      }
+                  ),
+                  dataType: 'json',
+                  success: function (returndata) {
+                      console.log(returndata);
+                      self.<%=CLASSNAME%>ObservableArray.splice(currentRow['rowIndex'], 1,
+                          {
+
+             '<%=CLASSNAME%>_Id': returndata.id,
+
+              <%for(var j=0; j<BASIC.length-1; j++){%>
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': returndata.<%=BASIC[j]['$']['name']%>,-%>
+            <%}%>                                                                                   
+              '<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>': returndata.<%=BASIC[j]['$']['name']%>
+                   
+ 
+                          });
+
+                  }
+
+              })
+
+
+          }
+      };
+
+      //used to remove the selected row
+      self.removeRow = function () {
+          var element = document.getElementById('table');
+          var currentRow = element.currentRow;
+
+
+          if (currentRow != null) {
+              $.ajax({
+                  url: "http://localhost:8080/api/<%=CLASSNAME%>/" + self.<%=CLASSNAME%>ObservableArray()[currentRow['rowIndex']].<%=CLASSNAME%>_Id,
+                  type: "DELETE",
+                  success: function (response) {
+                      console.log("delete success");
+                      console.log(response);
+                      self.<%=CLASSNAME%>ObservableArray.splice(currentRow['rowIndex'], 1);
+
+                  },
+
+                  error: function (e) {
+                      console.log(currentRow['rowIndex']);
+                      console.log(e);
+
+                  }
+              })
+          }
+
+
+      };
+
+
+
+      //intialize the observable values in the forms
+      self.input<%=CLASSNAME%>Id = ko.observable();
+
+      <%for(var j=0; j<BASIC.length; j++){%>
+      self.input<%=CLASSNAME%><%=BASIC[j]['$']['name']%> = ko.observable();-%>
+      <%}%>                                                                                   
+
+      self.editOrAdd = ko.observable();
+
+      self.currentRowListener = function(event)
+      {
+          var data = event.detail;
+          if (event.type == 'currentRowChanged' && data['value'] != null)
+          {
+              var rowIndex = data['value']['rowIndex'];
+              var <%=CLASSNAME%> = vm.<%=CLASSNAME%>ObservableArray()[rowIndex];
+              vm.input<%=CLASSNAME%>Id(<%=CLASSNAME%>['<%=CLASSNAME%>_Id']);
+
+              <%for(var j=0; j<BASIC.length; j++){%>
+              vm.input<%=CLASSNAME%><%=BASIC[j]['$']['name']%>(<%=CLASSNAME%>['<%=CLASSNAME%>_<%=BASIC[j]['$']['name']%>']);-%>
+              <%}%>
+
+              //console.log(event)
+              //alert("It is working")
+          }
+      };
+
+
+
+
+  }
+
+    var vm = new viewModel;
+
+
+
+
+
+
+  //alert("model create!")
+  
+//  $(document).ready
+//  (
+//    function()
+//    {
+//      //ko.applyBindings(vm, document.getElementById('tableDemo'));
+////      var table = document.getElementById('table');
+////      table.addEventListener('currentRowChanged', vm.currentRowListener);
+//        $('#table').on('currentRowChanged', vm.currentRowListener);
+//    }
+//  );
+  
+  return vm;
+});	

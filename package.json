@@ -1,0 +1,30 @@
+{
+  "name": "owlsgenerator",
+  "version": "1.0.0",
+  "description": "This is a program that will generate CRUD web application automatically according to input ER diagram XML file.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WQRice/generatorDeplyment.git"
+  },
+  "keywords": [
+    "yeoman-generator",
+    "CRUD",
+    "Single-page-Website\"",
+    "Oracle-Jet",
+    "Spring-boot"
+  ],
+  "author": "Weiheng Qiu, Jialu Xu, Nguyen Henry Nhan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WQRice/generatorDeplyment/issues"
+  },
+  "homepage": "https://github.com/WQRice/generatorDeplyment#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-gh-pages": "^0.5.4"
+  }
+}

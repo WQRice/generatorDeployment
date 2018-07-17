@@ -1,0 +1,37 @@
+package OITWeb.<%=PACKAGENAME%>.repository;
+
+import OITWeb.<%=PACKAGENAME%>.model.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+@RepositoryRestResource(collectionResourceRel = "<%-CLASSNAME%>", path = "<%-CLASSNAME%>")
+public interface <%=CLASSNAME%>Repository extends JpaRepository<<%=CLASSNAME%>,Long>{
+<%if(ONETOMANY!=undefined){
+	for(var j in ONETOMANY){-%>
+	List<<%-CLASSNAME%>> findBy<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>In<%-CLASSNAME%>(<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>);
+
+<%	}-%>
+<%}-%>
+<%if(ONETOONE!=undefined){
+		for(var j in ONETOONE){-%>
+	List<<%-CLASSNAME%>> findBy<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>In<%-CLASSNAME%>(<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>);
+
+<%	}-%>
+<%}-%>
+<%if(MANYTOMANY!=undefined){
+		for(var j in MANYTOMANY){-%>
+	List<<%-CLASSNAME%>> findBy<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>In<%-CLASSNAME%>(<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>);
+
+<%	}-%>
+<%}-%>
+<%if(MANYTOONE!=undefined){
+		for(var j in MANYTOONE){-%>
+	List<<%-CLASSNAME%>> findBy<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>In<%-CLASSNAME%>(<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>);
+
+<%	}-%>
+<%}-%>
+}

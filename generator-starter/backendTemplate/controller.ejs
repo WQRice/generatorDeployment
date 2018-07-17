@@ -1,0 +1,192 @@
+package OITWeb.<%-PACKAGENAME%>.controller;
+
+import OITWeb.<%-PACKAGENAME%>.exception.ResourceNotFoundException;
+import OITWeb.<%-PACKAGENAME%>.model.*;
+import OITWeb.<%-PACKAGENAME%>.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class <%-CLASSNAME%>Controller {
+<%for(var i in IdToEntity){-%>
+
+    @Autowired
+    <%-IdToEntity[i]%>Repository <%-caseConvert.downFirst(IdToEntity[i])%>Repository;
+<%}-%>
+
+    //get all entitys
+    //@CrossOrigin
+    //@GetMapping("/<%-CLASSNAME%>")
+    //public List<<%-CLASSNAME%>> getAll<%-CLASSNAME%>s(){
+    //    return <%-caseConvert.downFirst(CLASSNAME)%>Repository.findAll();
+    //}
+
+    //create entity profile
+    //@CrossOrigin
+    @PostMapping("/<%-CLASSNAME%>")
+    public <%=CLASSNAME%> create<%=CLASSNAME%>(@Valid @RequestBody <%=CLASSNAME%> entity){
+        return <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(entity);
+    }
+
+    //get entity by id
+    //@CrossOrigin
+    //@GetMapping("/<%-CLASSNAME%>/{id}")
+    //public <%-CLASSNAME%> get<%-CLASSNAME%>ById(@PathVariable(value="id") Long id){
+    //   return <%-caseConvert.downFirst(CLASSNAME)%>Repository.findById(id)
+    //            .orElseThrow(()->new ResourceNotFoundException("<%-CLASSNAME%>","id",id));
+    //}
+
+    //update profile
+    //@CrossOrigin
+    @PutMapping("/<%-CLASSNAME%>/{id}")
+    public <%-CLASSNAME%> update<%-CLASSNAME%>(@PathVariable(value="id") Long id, @Valid @RequestBody <%-CLASSNAME%> entityDetail){
+        <%-CLASSNAME%> entity=<%-caseConvert.downFirst(CLASSNAME)%>Repository.findById(id).orElseThrow(()->new ResourceNotFoundException("<%-CLASSNAME%>","id",id));
+<%for(var j in BASIC){ -%>
+        entity.set<%- caseConvert.upFirst(BASIC[j]['$']['name'])%>(entityDetail.get<%-caseConvert.upFirst(BASIC[j]['$']['name'])%>());
+<%}-%>
+		<%-CLASSNAME%> update<%-CLASSNAME%>=<%-caseConvert.downFirst(CLASSNAME)%>Repository.save(entity);
+        return update<%-CLASSNAME%>;
+    }
+
+<%if(ONETOONE!=undefined){
+    for(var j in ONETOONE){-%>
+    //associate <%=CLASSNAME%> and <%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>
+    //@CrossOrigin
+    @PostMapping("/<%=CLASSNAME%>/{id1}/<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>/{id2}")
+    public ResponseEntity<?> associate<%=CLASSNAME%><%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>(@PathVariable(value="id1") Long id1, @PathVariable(value="id2") Long id2){
+        <%=CLASSNAME%> <%=caseConvert.downFirst(CLASSNAME)%>Entity=<%=caseConvert.downFirst(CLASSNAME)%>Repository.findById(id1).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>","id",id1));
+        <%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Entity=<%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Repository.findById(id2).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>","id",id2));
+        <%_if(ONETOONE[j]['$']['connected-attribute-id']!=undefined){-%>
+        if(<%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>()!=null){
+            <%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%> old1=<%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>();
+            old1.set<%=CLASSNAME%>In<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>(null);
+            <%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Repository.save(old1);
+        }
+        if(<%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>()!=null){
+            <%-CLASSNAME%> old2=<%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>();
+            old2.set<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>(null);
+            <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(old2);
+        }
+            <%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Entity.set<%=CLASSNAME%>In<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        <%_}-%>
+        <%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Repository.save(<%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Entity);
+        <%=caseConvert.downFirst(CLASSNAME)%>Entity.set<%-IdToEntity[ONETOONE[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>(<%-caseConvert.downFirst(IdToEntity[ONETOONE[j]['$']['connected-entity-id']])%>Entity);
+        <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        return ResponseEntity.ok().build();
+    }
+
+<%	}-%>
+<%}-%>
+<%if(ONETOMANY!=undefined){
+    for(var j in ONETOMANY){-%>
+    //associate <%=CLASSNAME%> and <%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>
+    //@CrossOrigin
+    @PostMapping("/<%=CLASSNAME%>/{id1}/<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>/{id2}")
+    public ResponseEntity<?> associate<%=CLASSNAME%><%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>(@PathVariable(value="id1") Long id1, @PathVariable(value="id2") Long id2){
+        <%=CLASSNAME%> <%=caseConvert.downFirst(CLASSNAME)%>Entity=<%=caseConvert.downFirst(CLASSNAME)%>Repository.findById(id1).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>","id",id1));
+        <%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity=<%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Repository.findById(id2).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>","id",id2));
+        <%_if(ONETOMANY[j]['$']['connected-attribute-id']!=undefined){-%>
+        if(<%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>()!=null){
+            <%=CLASSNAME%> old=<%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>();
+            old.get<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>().remove(<%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity);
+            <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(old);
+        }
+        <%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity.set<%=CLASSNAME%>In<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        <%_}-%>
+        <%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Repository.save(<%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity);
+        if(!<%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>().contains(<%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity))
+            <%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[ONETOMANY[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>().add(<%-caseConvert.downFirst(IdToEntity[ONETOMANY[j]['$']['connected-entity-id']])%>Entity);
+        <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        return ResponseEntity.ok().build();
+    }
+
+<%	}-%>
+<%}-%>
+<%if(MANYTOONE!=undefined){
+    for(var j in MANYTOONE){-%>
+    //associate <%=CLASSNAME%> and <%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>
+    //@CrossOrigin
+    @PostMapping("/<%=CLASSNAME%>/{id1}/<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>/{id2}")
+    public ResponseEntity<?> associate<%=CLASSNAME%><%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>(@PathVariable(value="id1") Long id1, @PathVariable(value="id2") Long id2){
+        <%=CLASSNAME%> <%=caseConvert.downFirst(CLASSNAME)%>Entity=<%=caseConvert.downFirst(CLASSNAME)%>Repository.findById(id1).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>","id",id1));
+        <%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Entity=<%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Repository.findById(id2).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>","id",id2));
+        <%_if(MANYTOONE[j]['$']['connected-attribute-id']!=undefined){-%>
+        if(<%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>()!=null){
+            <%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%> old=<%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>();
+            old.get<%=CLASSNAME%>In<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>().remove(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+            <%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Repository.save(old);
+        }
+        if(!<%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>().contains(<%=caseConvert.downFirst(CLASSNAME)%>Entity))
+            <%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>().add(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        <%_}-%>
+        <%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Repository.save(<%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Entity);
+        <%=caseConvert.downFirst(CLASSNAME)%>Entity.set<%-IdToEntity[MANYTOONE[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>(<%-caseConvert.downFirst(IdToEntity[MANYTOONE[j]['$']['connected-entity-id']])%>Entity);
+        <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        return ResponseEntity.ok().build();
+    }
+
+<%	}-%>
+<%}-%>
+<%if(MANYTOMANY!=undefined){
+    for(var j in MANYTOMANY){-%>
+    //associate <%=CLASSNAME%> and <%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>
+    //@CrossOrigin
+    @PostMapping("/<%=CLASSNAME%>/{id1}/<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>/{id2}")
+    public ResponseEntity<?> associate<%=CLASSNAME%><%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>(@PathVariable(value="id1") Long id1, @PathVariable(value="id2") Long id2){
+        <%=CLASSNAME%> <%=caseConvert.downFirst(CLASSNAME)%>Entity=<%=caseConvert.downFirst(CLASSNAME)%>Repository.findById(id1).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>","id",id1));
+        <%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%> <%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Entity=<%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Repository.findById(id2).orElseThrow(()->new ResourceNotFoundException("<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>","id",id2));
+        if(!<%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>().contains(<%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Entity))
+            <%=caseConvert.downFirst(CLASSNAME)%>Entity.get<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>In<%=CLASSNAME%>().add(<%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Entity);
+        <%_if(MANYTOMANY[j]['$']['connected-attribute-id']!=undefined){-%>
+        if(!<%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>().contains(<%=caseConvert.downFirst(CLASSNAME)%>Entity))
+            <%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Entity.get<%=CLASSNAME%>In<%-IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']]%>().add(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        <%_}-%>
+        <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        <%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Repository.save(<%-caseConvert.downFirst(IdToEntity[MANYTOMANY[j]['$']['connected-entity-id']])%>Entity);
+        return ResponseEntity.ok().build();
+    }
+
+<%	}-%>
+<%}-%>
+    //Delete entity profile
+    //@CrossOrigin
+    @DeleteMapping("/<%-CLASSNAME%>/{id}")
+    public ResponseEntity<?> delete<%-CLASSNAME%>(@PathVariable(value="id") Long id){
+        <%=CLASSNAME%> <%=caseConvert.downFirst(CLASSNAME)%>Entity=<%-caseConvert.downFirst(CLASSNAME)%>Repository.findById(id).orElseThrow(()->new ResourceNotFoundException("<%-CLASSNAME%>","id",id));
+    <%_for(var j in mappedBy[CLASSNAME]['oneByOne']){-%>
+        List<<%-mappedBy[CLASSNAME]['oneByOne'][j]%>> <%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByOne'][j])%>List=<%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByOne'][j])%>Repository.findBy<%-CLASSNAME%>In<%-mappedBy[CLASSNAME]['oneByOne'][j]%>(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        for(<%-mappedBy[CLASSNAME]['oneByOne'][j]%> entity:<%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByOne'][j])%>List){
+            entity.set<%=CLASSNAME%>In<%-mappedBy[CLASSNAME]['oneByOne'][j]%>(null);
+            <%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByOne'][j])%>Repository.save(entity);
+        }
+    <%_}-%>
+    <%_for(var j in mappedBy[CLASSNAME]['oneByMany']){-%>
+        List<<%-mappedBy[CLASSNAME]['oneByMany'][j]%>> <%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByMany'][j])%>List=<%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByMany'][j])%>Repository.findBy<%-CLASSNAME%>In<%-mappedBy[CLASSNAME]['oneByMany'][j]%>(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        for(<%-mappedBy[CLASSNAME]['oneByMany'][j]%> entity:<%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByMany'][j])%>List){
+            entity.set<%=CLASSNAME%>In<%-mappedBy[CLASSNAME]['oneByMany'][j]%>(null);
+            <%-caseConvert.downFirst(mappedBy[CLASSNAME]['oneByMany'][j])%>Repository.save(entity);
+        }
+    <%_}-%>
+    <%_for(var j in mappedBy[CLASSNAME]['manyByOne']){-%>
+        List<<%-mappedBy[CLASSNAME]['manyByOne'][j]%>> <%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByOne'][j])%>List=<%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByOne'][j])%>Repository.findBy<%-CLASSNAME%>In<%-mappedBy[CLASSNAME]['manyByOne'][j]%>(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        for(<%-mappedBy[CLASSNAME]['manyByOne'][j]%> entity:<%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByOne'][j])%>List){
+            entity.get<%=CLASSNAME%>In<%-mappedBy[CLASSNAME]['manyByOne'][j]%>().remove(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+            <%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByOne'][j])%>Repository.save(entity);
+        }
+    <%_}-%>
+    <%_for(var j in mappedBy[CLASSNAME]['manyByMany']){-%>
+        List<<%-mappedBy[CLASSNAME]['manyByMany'][j]%>> <%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByMany'][j])%>List=<%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByMany'][j])%>Repository.findBy<%-CLASSNAME%>In<%-mappedBy[CLASSNAME]['manyByMany'][j]%>(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+        for(<%-mappedBy[CLASSNAME]['manyByMany'][j]%> entity:<%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByMany'][j])%>List){
+            entity.get<%=CLASSNAME%>In<%-mappedBy[CLASSNAME]['manyByMany'][j]%>().remove(<%=caseConvert.downFirst(CLASSNAME)%>Entity);
+            <%-caseConvert.downFirst(mappedBy[CLASSNAME]['manyByMany'][j])%>Repository.save(entity);
+        }
+    <%_ }-%>
+        <%-caseConvert.downFirst(CLASSNAME)%>Repository.delete(<%-caseConvert.downFirst(CLASSNAME)%>Entity);
+        return ResponseEntity.ok().build();
+    }
+
+}

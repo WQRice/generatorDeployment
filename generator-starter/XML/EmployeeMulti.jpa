@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" v="4.8.4" rws="_15289234004702" Pws="_15289234004702" cws="_15289234004702" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_15289234004691" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" xre="false" m="false" rootElement="_15289234004691" id="_15289234084133">
+        <jpa:ath>oitadmin</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="title" id="_152899972455240">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_152899542475012" v="true" xvt="" name="birthday" id="_152899932968834">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-one>
+            <jpa:one-to-one own="true" primaryKey="false" connected-entity-id="_152899953111535" connected-attribute-id="_152908669895814" v="true" xvt="" name="name" id="_152908669895713">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-one>
+            <jpa:many-to-many own="true" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_15289234188166" connected-attribute-id="_152899931258432" v="true" name="addresses" id="_152899931258131"/>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_15289234084654">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Employee.findAll">
+            <jpa:query>Select e from Employee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Employee.findByEmpId">
+            <jpa:query>Select e from Employee e where e.EmpId=:EmpId</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Employee.findByName">
+            <jpa:query>Select e from Employee e where e.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Employee.findByName">
+            <jpa:query>Select e from Employee e where e.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Employee.findByTitle">
+            <jpa:query>Select e from Employee e where e.title=:title</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="AddressPK" abs="false" class="Address" v="true" xre="false" m="false" rootElement="_15289234004691" id="_15289234188166">
+        <jpa:ath>oitadmin</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="AddressLine1" uil="Address Line 1" id="_152892358382515">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="AddressLine2" uil="Address Line 2" id="_152892359112816">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="City" id="_152892362911318">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="State" id="_152892361663017"/>
+            <jpa:many-to-many collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_15289234084133" connected-attribute-id="_152899931258131" v="true" name="employees" id="_152899931258432"/>
+            <jpa:id attribute-type="Long" v="true" name="id" id="_15289234188177">
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Address.findAll">
+            <jpa:query>Select e from Address e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Address.findByEmpId">
+            <jpa:query>Select a from Address a where a.EmpId=:EmpId</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Address.findByAddressLine1">
+            <jpa:query>Select a from Address a where a.AddressLine1=:AddressLine1</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Address.findByAddressLine2">
+            <jpa:query>Select a from Address a where a.AddressLine2=:AddressLine2</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Address.findByState">
+            <jpa:query>Select a from Address a where a.State=:State</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Address.findByCity">
+            <jpa:query>Select a from Address a where a.City=:City</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="BirthdayPK" abs="false" class="Birthday" v="true" xre="false" m="false" rootElement="_15289234004691" id="_152899542475012">
+        <jpa:ath>oitadmin</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="month" id="_152899543801015">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="day" id="_152899544353016"/>
+            <jpa:id attribute-type="Long" v="true" name="id" id="_152899542475913">
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Birthday.findAll">
+            <jpa:query>Select e from Birthday e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Birthday.findByMonth">
+            <jpa:query>Select b from Birthday b where b.month=:month</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Birthday.findByDay">
+            <jpa:query>Select b from Birthday b where b.day=:day</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="NamePK" abs="false" class="Name" v="true" xre="false" m="false" rootElement="_15289234004691" id="_152899953111535">
+        <jpa:ath>oitadmin</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" uil="First Name" id="_152900323369641">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="lastName" uil="Last Name" id="_152900324115142">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:one-to-one primaryKey="false" connected-entity-id="_15289234084133" connected-attribute-id="_152908669895713" v="true" name="employee" id="_152908669895814"/>
+            <jpa:id attribute-type="Long" v="true" name="id" id="_152899953112036">
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Name.findAll">
+            <jpa:query>Select e from Name e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Name.findByFirstName">
+            <jpa:query>Select n from Name n where n.firstName=:firstName</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Name.findByLastName">
+            <jpa:query>Select n from Name n where n.lastName=:lastName</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**
+ * This file was generated by the Jeddict
+ */</jpa:snp>
+    <jpa:c>
+        <ct>java.util.List</ct>
+        <ct>java.util.Set</ct>
+        <ct>java.util.Map</ct>
+        <ct>java.util.Collection</ct>
+        <cit>java.util.ArrayList</cit>
+        <cit>java.util.LinkedList</cit>
+        <cit>java.util.HashSet</cit>
+        <cit>java.util.TreeSet</cit>
+        <cit>java.util.HashMap</cit>
+    </jpa:c>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_15289234004702">
+            <i ref="_152899953111535" x="341" y="48"/>
+            <i ref="_15289234188166" x="647" y="211"/>
+            <i ref="_15289234084133" x="88" y="231"/>
+            <i ref="_152899542475012" x="497" y="103"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>

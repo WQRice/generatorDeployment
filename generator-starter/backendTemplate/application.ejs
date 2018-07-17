@@ -1,0 +1,14 @@
+package OITWeb.<%=PACKAGENAME%>;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+@SpringBootApplication
+@EnableJpaAuditing
+public class <%=PACKAGENAME[0].toUpperCase() + PACKAGENAME.slice(1)%>Application {
+    public static void main(String[] args) {
+        System.out.println("Hello word!");
+        SpringApplication.run(<%=PACKAGENAME[0].toUpperCase() + PACKAGENAME.slice(1)%>Application.class, args);
+    }
+}
