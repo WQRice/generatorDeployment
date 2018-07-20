@@ -1,8 +1,0 @@
-{
-  "generator-starter": {
-    "promptValues": {
-      "packageName": "sample",
-      "executeLater": "Yes"
-    }
-  }
-}

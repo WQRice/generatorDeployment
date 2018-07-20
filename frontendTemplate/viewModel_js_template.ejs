@@ -1,0 +1,263 @@
+
+
+<%
+// var caseConvert=require("../module/CaseConvert");
+var downFirst=function(s) {
+    if(s.length==0) return s;
+    return s[0].toLowerCase()+s.slice(1);
+}
+
+var labelMap = {};
+for (var j in BASIC) {
+  if (BASIC[j]['$']['uil']!=undefined) {
+  labelMap[BASIC[j]['$']['name']] = BASIC[j]['$']['uil'];
+} else {labelMap[BASIC[j]['$']['name']] = CLASSNAME +" "+BASIC[j]['$']['name']; }
+}
+
+var oneArray = mappedBy[CLASSNAME].oneByOne.concat(mappedBy[CLASSNAME].manyByOne);
+var manyArray = mappedBy[CLASSNAME].oneByMany.concat(mappedBy[CLASSNAME].manyByMany);
+
+var attMap = {};
+for (var i in oneArray) {
+  attMap[oneArray[i]] = {
+                oneOrMany : "one",
+                inputAttRef: "input"+CLASSNAME+oneArray[i]+"Array",
+                attInSelfName: downFirst(oneArray[i])+"In"+CLASSNAME,
+                selfInAttName: downFirst(CLASSNAME)+"In" + oneArray[i],
+                inputColumnArray : "input" + oneArray[i] +"ColumnArray"
+
+  }
+}
+
+for (var i in manyArray) {
+  attMap[manyArray[i]] = {
+                oneOrMany : "many",
+                inputAttRef: "input"+CLASSNAME+manyArray[i]+"Array",
+                attInSelfName: downFirst(manyArray[i])+"In"+CLASSNAME,
+                selfInAttName: downFirst(CLASSNAME)+"In" + manyArray[i],
+                inputColumnArray : "input" + manyArray[i] +"ColumnArray"
+
+  }
+}
+
+-%>
+
+ 
+
+/**
+ * <%=CLASSNAME%> Table module
+ */
+define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'promise', 'ojs/ojinputtext', 'ojs/ojinputnumber', 'ojs/ojtable', 'ojs/ojarraydataprovider', 'ojs/ojlabel', 'ojs/ojdialog',
+        'ojs/ojdatetimepicker', 'ojs/ojpagingcontrol', 'ojs/ojpagingtabledatasource', 'ojs/ojarraytabledatasource', 'ojs/ojselectcombobox'],
+function(oj, ko, $)
+{   
+  function viewModel() {
+      var self = this;
+      //
+
+      self.oneArray = <%- JSON.stringify(oneArray)%>;
+      self.manyArray = <%- JSON.stringify(manyArray)%>;
+
+      self.attMap = <%- JSON.stringify(attMap, null, 4) %>;
+
+
+          self.<%=CLASSNAME%>ObservableArray = ko.observableArray();
+      
+
+      self.initialize = function() {
+
+      self.<%=CLASSNAME%>ObservableArray.removeAll();
+
+
+
+      $.get('http://localhost:8080/<%=CLASSNAME%>',function(data) {
+          //alert(data);
+          //console.log(data);
+          //console.log(self.deptObservableArray());
+
+          //self.deptObservableArray([]);
+          //console.log(self.deptObservableArray().length);
+
+          
+          var extractedData = data["_embedded"]["<%-CLASSNAME%>"];
+
+           var counter = 0;
+
+
+          for (var i = 0; i < extractedData.length; i++) {
+
+                                     (function (i) {
+
+                            var topush = {
+                        
+
+                              '<%=CLASSNAME%>_Id': extractedData[i].id,
+
+                       <%for(var jj=0; jj<BASIC.length-1; jj++){%>
+                      '<%=CLASSNAME%>_<%=BASIC[jj]['$']['name']%>': extractedData[i].<%=BASIC[jj]['$']['name']%>,-%>
+                       <%}%>                                                                                   
+                       '<%=CLASSNAME%>_<%=BASIC[jj]['$']['name']%>': extractedData[i].<%=BASIC[jj]['$']['name']%>
+              
+                            };
+
+                              var defs = [];
+                              for (var ii = 0; ii < self.oneArray.length; ii++) {
+                               defs.push(new $.Deferred());
+                             }
+
+                             <%for(var j in oneArray){%>
+                                $.ajax({
+                                    type: "GET",
+                                    url: extractedData[i]._links.<%-attMap[oneArray[j]].attInSelfName%>.href
+                                }).done(function (data0) {
+                                        topush['<%-CLASSNAME%>_<%-downFirst(oneArray[i])%>'] = data0.id;
+                                        // alert(JSON.stringify(data0));
+                                        defs[<%-j%>].resolve(true);
+
+                                    }
+                                // counter++;
+                                // if (counter == extractedData.length) {
+                                //     self.CourseObservableArray.sort(function (left, right) {
+                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
+                                //     });
+                                //     alert(JSON.stringify(self.CourseObservableArray()));
+                                // }
+
+                                // data = data0;
+                            ).fail(function (data0) {
+                                defs[<%-j%>].resolve(false);
+                                // alert("failed");
+                                // self.CourseObservableArray.push({
+                                //     'Course_Id': extractedData[i].id,
+                                //     'Course_classroom': extractedData[i].classroom
+                                // });
+                                // counter++;
+                                // if (counter == extractedData.length) {
+                                //     self.CourseObservableArray.sort(function (left, right) {
+                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
+                                //     });
+                                //     alert(JSON.stringify(self.CourseObservableArray()));
+                                // }
+                            });
+                          <%}%>
+
+                            $.when.apply($, defs).then(function() {
+                                self.<%-CLASSNAME%>ObservableArray.push(topush);
+                                counter++;
+                                if (counter == extractedData.length) {
+                                    self.<%-CLASSNAME%>ObservableArray.sort(function (left, right) {
+                                        return left.<%-CLASSNAME%>_Id == right.<%-CLASSNAME%>_Id ? 0 : (left.<%-CLASSNAME%>_Id < right.<%-CLASSNAME%>_Id ? -1 : 1)
+                                    });
+                                    // alert(JSON.stringify(self.CourseObservableArray()));
+                                }
+                            });
+
+                        })(i);
+
+
+
+          }
+      })
+
+     };
+  
+
+              self.addButtonClick=function(){
+                oj.Router.rootInstance.store({'page':"<%-CLASSNAME%>"});
+                oj.Router.rootInstance.go("Add<%-CLASSNAME%>");
+//            alert('next');
+            };
+            self.editButtonClick=function(){
+
+                var element = document.getElementById('table');
+                var currentRow = element.currentRow;
+
+                var rowIndex = currentRow['rowIndex'];
+                var <%-CLASSNAME%> = vm.<%-CLASSNAME%>ObservableArray()[rowIndex];
+                // alert("course id" + Course['Course_Id']);
+                // vm.inputCourseId(Course['Course_Id']);
+
+
+                // vm.inputCourseclassroom(Course['Course_classroom']);
+
+                var rootViewModel = ko.dataFor(document.getElementById('globalBody'));
+                rootViewModel.frontToEditData(
+                    {
+                    
+
+                      'id': <%-CLASSNAME%>.<%-CLASSNAME%>_Id,
+
+
+                      <%for(var jj=0; jj<BASIC.length-1; jj++){%>
+                      '<%=BASIC[jj]['$']['name']%>': <%-CLASSNAME%>.<%=CLASSNAME%>_<%-BASIC[jj]['$']['name']%>,-%>
+                       <%}%>                                                                                   
+                       '<%=BASIC[jj]['$']['name']%>': <%-CLASSNAME%>.<%=CLASSNAME%>_<%-BASIC[jj]['$']['name']%>         
+                    }
+                );
+
+
+
+                oj.Router.rootInstance.store({'page':"<%-CLASSNAME%>"});
+                oj.Router.rootInstance.go("Edit<%-CLASSNAME%>");
+//            alert('next');
+            };
+
+
+
+      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.<%=CLASSNAME%>ObservableArray, {idAttribute: '<%=CLASSNAME%>_Id', sortCriteria : [{key: '<%=CLASSNAME%>_Id', direction: 'ascending'}]}));
+
+
+      self.columnArray = [
+                                            
+            {"headerText": "<%=CLASSNAME%> Id", "field": "<%=CLASSNAME%>_Id", "headerStyle": 'font-weight:bold'},
+                  <%for(var j=0; j<BASIC.length; j++){%>
+                    {"headerText": "<%=labelMap[BASIC[j]['$']['name']]%>", "field": "<%=CLASSNAME+"_"+BASIC[j]['$']['name']%>", "headerStyle": 'font-weight:bold'},
+                 <%}%>
+
+                  <%for(var j=0; j<oneArray.length; j++){%>
+                    {"headerText": "<%=oneArray[j]%>", "field": "<%=CLASSNAME+"_"+ downFirst(oneArray[j])%>", "headerStyle": 'font-weight:bold'},
+                 <%}%>
+
+          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align: right"}
+
+          ];
+
+
+        //used to remove the selected row
+      self.removeRow = function () {
+          var element = document.getElementById('table');
+          var currentRow = element.currentRow;
+
+
+          if (currentRow != null) {
+              $.ajax({
+                  url: "http://localhost:8080/api/<%=CLASSNAME%>/" + self.<%=CLASSNAME%>ObservableArray()[currentRow['rowIndex']].<%=CLASSNAME%>_Id,
+                  type: "DELETE",
+                  success: function (response) {
+                      console.log("delete success");
+                      console.log(response);
+                      self.<%=CLASSNAME%>ObservableArray.splice(currentRow['rowIndex'], 1);
+
+                  },
+
+                  error: function (e) {
+                      console.log(currentRow['rowIndex']);
+                      console.log(e);
+
+                  }
+              })
+          }
+
+
+      };
+
+
+
+
+  }
+
+    var vm = new viewModel;
+
+  
+  return vm;
+});	
