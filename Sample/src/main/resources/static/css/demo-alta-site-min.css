@@ -1,8 +1,46 @@
 @font-face {
     font-family: 'AppFont';
-    src: url("fonts/App_iconfont.woff") format("woff");
+    src: url("fonts/icomoon.woff") format("woff");
     font-weight: normal;
-    font-style: normal
+    font-style: normal;
+
+
+}
+
+.fs1 {
+    font-family: AppFont;
+    font-size: 32px;
+    line-height: 1;
+    display: inline-block;
+    font-weight: normal;
+    speak: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-align: center;
+    box-sizing: content-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+}
+
+.fs2 {
+    font-family: AppFont;
+    font-size: 28px;
+    line-height: 1;
+    display: inline-block;
+    font-weight: normal;
+    speak: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-align: center;
+    box-sizing: content-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
 }
 
 .demo-icon-font,
@@ -19,7 +57,13 @@
     text-align: center;
     box-sizing: content-box;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+}
+
+.demo-icon-font-18 {
+    font-size: 18px
 }
 
 .demo-icon-font:before,
@@ -367,6 +411,15 @@ html[dir="rtl"] .demo-appheader-classic .demo-appheader-logo {
 
 .demo-appheader-avatar:before {
     content: url("images/avatar_24px.png")
+}
+
+.demo-appheader-menu {
+    width: 24px;
+    height: 24px
+}
+
+.demo-appheader-menu:before {
+    content: url("images/menu.png")
 }
 
 @media (-webkit-min-device-pixel-ratio: 1.5),

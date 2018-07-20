@@ -1,10 +1,7 @@
 
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+ 
 
 /**
  * Student Table module
@@ -17,10 +14,30 @@ function(oj, ko, $)
       var self = this;
       //
 
+      self.oneArray = [];
+      self.manyArray = ["Course"];
+
+      self.attMap = {
+    "Course": {
+        "oneOrMany": "many",
+        "inputAttRef": "inputStudentCourseArray",
+        "attInSelfName": "courseInStudent",
+        "selfInAttName": "studentInCourse",
+        "inputColumnArray": "inputCourseColumnArray"
+    }
+};
+
+
           self.StudentObservableArray = ko.observableArray();
+      
+
+      self.initialize = function() {
+
+      self.StudentObservableArray.removeAll();
 
 
-      $.get('http://localhost:8080/api/Student',function(data) {
+
+      $.get('http://localhost:8080/Student',function(data) {
           //alert(data);
           //console.log(data);
           //console.log(self.deptObservableArray());
@@ -28,25 +45,100 @@ function(oj, ko, $)
           //self.deptObservableArray([]);
           //console.log(self.deptObservableArray().length);
 
+          
+          var extractedData = data["_embedded"]["Student"];
 
-          for (var i = 0; i < data.length; i++) {
-              console.log("add data");
+           var counter = 0;
 
-              self.StudentObservableArray.push({
 
-              'Student_Id': data[i].id,
+          for (var i = 0; i < extractedData.length; i++) {
 
+                                     (function (i) {
+
+                            var topush = {
+                        
+
+                              'Student_Id': extractedData[i].id,
+
+                       
+                      'Student_studentId': extractedData[i].studentId,                       
+                      'Student_firstName': extractedData[i].firstName,                                                                                                          
+                       'Student_lastName': extractedData[i].lastName
               
-              'Student_studentId': data[i].studentId,            
-              'Student_firstName': data[i].firstName,                                                                                               
-              'Student_lastName': data[i].lastName
-              });
-          }
-      });
+                            };
 
+                              var defs = [];
+                              for (var ii = 0; ii < self.oneArray.length; ii++) {
+                               defs.push(new $.Deferred());
+                             }
+
+                             
+
+                            $.when.apply($, defs).then(function() {
+                                self.StudentObservableArray.push(topush);
+                                counter++;
+                                if (counter == extractedData.length) {
+                                    self.StudentObservableArray.sort(function (left, right) {
+                                        return left.Student_Id == right.Student_Id ? 0 : (left.Student_Id < right.Student_Id ? -1 : 1)
+                                    });
+                                    // alert(JSON.stringify(self.CourseObservableArray()));
+                                }
+                            });
+
+                        })(i);
+
+
+
+          }
+      })
+
+     };
   
 
-      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.StudentObservableArray, {idAttribute: 'Student_Id'}));
+              self.addButtonClick=function(){
+                oj.Router.rootInstance.store({'page':"Student"});
+                oj.Router.rootInstance.go("AddStudent");
+//            alert('next');
+            };
+            self.editButtonClick=function(){
+
+                var element = document.getElementById('table');
+                var currentRow = element.currentRow;
+
+                var rowIndex = currentRow['rowIndex'];
+                var Student = vm.StudentObservableArray()[rowIndex];
+                // alert("course id" + Course['Course_Id']);
+                // vm.inputCourseId(Course['Course_Id']);
+
+
+                // vm.inputCourseclassroom(Course['Course_classroom']);
+
+                var rootViewModel = ko.dataFor(document.getElementById('globalBody'));
+                rootViewModel.frontToEditData(
+                    {
+                    
+
+                      'id': Student.Student_Id,
+
+
+                      
+                      'studentId': Student.Student_studentId,                       
+                      'firstName': Student.Student_firstName,                                                                                                          
+                       'lastName': Student.Student_lastName         
+                    }
+                );
+
+
+
+                oj.Router.rootInstance.store({'page':"Student"});
+                oj.Router.rootInstance.go("EditStudent");
+//            alert('next');
+            };
+
+
+
+      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.StudentObservableArray, {idAttribute: 'Student_Id', sortCriteria : [{key: 'Student_Id', direction: 'ascending'}]}));
+
 
       self.columnArray = [
                                             
@@ -59,187 +151,14 @@ function(oj, ko, $)
                     {"headerText": "Student lastName", "field": "Student_lastName", "headerStyle": 'font-weight:bold'},
                  
 
-          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align": right"}
+                  
+
+          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align: right"}
 
           ];
 
 
-      self.editButtonClick = function(data, event){
-          //alert(DepartmentId);
-          self.editOrAdd("edit");
-          document.getElementById("buttontext").innerHTML = 'Update';
-          document.getElementById("dialogTitleId").innerHTML = 'Edit Student Record';
-          
-          document.querySelector('#modalDialog1').open();
-
-          return true;
-      };
-
-
-     self.closeDialog = function() {
-
-         var elementArray = [];
-
-                     
-                elementArray.push(document.getElementById("StudentstudentIdInput"));
-
-                     
-                elementArray.push(document.getElementById("StudentfirstNameInput"));
-
-                     
-                elementArray.push(document.getElementById("StudentlastNameInput"));
-
-          
-
-          var invalidflag=false;
-          for (var i=0; i<elementArray.length; i++) {
-              if (!(elementArray[i].valid === "valid")) {
-                  elementArray[i].showMessages();
-                  if (invalidflag==false) invalidflag = true;
-              }
-          }
-
-
-          //proceed to add or update record only if all input fields are valid
-          if(invalidflag==false) {
-
-          // if it is a adding action, do POST
-
-              if (self.editOrAdd() == "add") {
-                  self.addRow();
-              }
-
-
-              // if it is during an Editing action, do PUT
-
-              if (self.editOrAdd() == "edit") {
-                  // alert('updating');
-
-                  self.updateRow();
-
-              }
-
-              //closing dialog window
-              // alert('closing dialog');
-              document.querySelector('#modalDialog1').close();
-          }
-      };
-
-
-      self.addButtonClick = function () {
-
-          //
-          self.editOrAdd("add");
-
-          document.getElementById("buttontext").innerHTML = 'Add';
-          document.getElementById("dialogTitleId").innerHTML = 'Add Student Record';
-
-
-          //clear up input fields
-          self.inputStudentId(null);
-                      self.inputStudentstudentId(null);
-                      self.inputStudentfirstName(null);
-                      self.inputStudentlastName(null);
-          
-
-          document.querySelector('#modalDialog1').open();
-          return true;
-
-
-
-      };
-
-      //add to the observableArray
-      self.addRow = function () {
-          var Student = {
-              'Student_Id': self.inputStudentId(),
-              
-              'Student_studentId': self.inputStudentstudentId(),              
-              'Student_firstName': self.inputStudentfirstName(),              
-              'Student_lastName': self.inputStudentlastName()          
-            };
-
-          var Student2database = $.ajax({
-              type: "POST",
-              contentType: 'application/json',
-              url: "http://localhost:8080/api/Student",
-              data: JSON.stringify(
-                  {
-              'Id': self.inputStudentId(),
-              
-              'studentId': self.inputStudentstudentId(),              
-              'firstName': self.inputStudentfirstName(),              
-              'lastName': self.inputStudentlastName()
-
-                  }),
-              dataType: "json",
-              success: function (returndata) {
-                  console.log(returndata);
-                  self.StudentObservableArray.push(
-                      {
-
-             'Student_Id': returndata.id,
-
-              
-              'Student_studentId': returndata.studentId,            
-              'Student_firstName': returndata.firstName,                                                                                               
-              'Student_lastName': returndata.lastName
-                   
-                      });
-                  console.log('length' + self.StudentObservableArray().length);
-
-              }
-          });
-
-
-      };
-
-
-      //used to update the fields based on the selected row
-      self.updateRow = function () {
-          var element = document.getElementById('table');
-          var currentRow = element.currentRow;
-
-          if (currentRow != null) {
-              // DO PUT
-              $.ajax({
-                  type: "PUT",
-                  contentType: 'application/json; charset=utf-8',
-                  url: "http://localhost:8080/api/Student/" + self.inputStudentId(),
-                  data: JSON.stringify(
-                      {
-               'Id': self.inputStudentId(),
-              
-              'studentId': self.inputStudentstudentId(),              
-              'firstName': self.inputStudentfirstName(),              
-              'lastName': self.inputStudentlastName()
-                      }
-                  ),
-                  dataType: 'json',
-                  success: function (returndata) {
-                      console.log(returndata);
-                      self.StudentObservableArray.splice(currentRow['rowIndex'], 1,
-                          {
-
-             'Student_Id': returndata.id,
-
-              
-              'Student_studentId': returndata.studentId,            
-              'Student_firstName': returndata.firstName,                                                                                               
-              'Student_lastName': returndata.lastName
-                   
- 
-                          });
-
-                  }
-
-              })
-
-
-          }
-      };
-
-      //used to remove the selected row
+        //used to remove the selected row
       self.removeRow = function () {
           var element = document.getElementById('table');
           var currentRow = element.currentRow;
@@ -269,59 +188,11 @@ function(oj, ko, $)
 
 
 
-      //intialize the observable values in the forms
-      self.inputStudentId = ko.observable();
-
-      
-      self.inputStudentstudentId = ko.observable();      
-      self.inputStudentfirstName = ko.observable();      
-      self.inputStudentlastName = ko.observable();                                                                                         
-
-      self.editOrAdd = ko.observable();
-
-      self.currentRowListener = function(event)
-      {
-          var data = event.detail;
-          if (event.type == 'currentRowChanged' && data['value'] != null)
-          {
-              var rowIndex = data['value']['rowIndex'];
-              var Student = vm.StudentObservableArray()[rowIndex];
-              vm.inputStudentId(Student['Student_Id']);
-
-              
-              vm.inputStudentstudentId(Student['Student_studentId']);              
-              vm.inputStudentfirstName(Student['Student_firstName']);              
-              vm.inputStudentlastName(Student['Student_lastName']);              
-
-              //console.log(event)
-              //alert("It is working")
-          }
-      };
-
-
-
 
   }
 
     var vm = new viewModel;
 
-
-
-
-
-
-  //alert("model create!")
-  
-//  $(document).ready
-//  (
-//    function()
-//    {
-//      //ko.applyBindings(vm, document.getElementById('tableDemo'));
-////      var table = document.getElementById('table');
-////      table.addEventListener('currentRowChanged', vm.currentRowListener);
-//        $('#table').on('currentRowChanged', vm.currentRowListener);
-//    }
-//  );
   
   return vm;
 });	

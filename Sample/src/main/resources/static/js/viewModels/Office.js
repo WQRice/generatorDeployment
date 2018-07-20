@@ -1,10 +1,7 @@
 
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+ 
 
 /**
  * Office Table module
@@ -17,10 +14,30 @@ function(oj, ko, $)
       var self = this;
       //
 
+      self.oneArray = ["Professor"];
+      self.manyArray = [];
+
+      self.attMap = {
+    "Professor": {
+        "oneOrMany": "one",
+        "inputAttRef": "inputOfficeProfessorArray",
+        "attInSelfName": "professorInOffice",
+        "selfInAttName": "officeInProfessor",
+        "inputColumnArray": "inputProfessorColumnArray"
+    }
+};
+
+
           self.OfficeObservableArray = ko.observableArray();
+      
+
+      self.initialize = function() {
+
+      self.OfficeObservableArray.removeAll();
 
 
-      $.get('http://localhost:8080/api/Office',function(data) {
+
+      $.get('http://localhost:8080/Office',function(data) {
           //alert(data);
           //console.log(data);
           //console.log(self.deptObservableArray());
@@ -28,23 +45,130 @@ function(oj, ko, $)
           //self.deptObservableArray([]);
           //console.log(self.deptObservableArray().length);
 
+          
+          var extractedData = data["_embedded"]["Office"];
 
-          for (var i = 0; i < data.length; i++) {
-              console.log("add data");
+           var counter = 0;
 
-              self.OfficeObservableArray.push({
 
-              'Office_Id': data[i].id,
+          for (var i = 0; i < extractedData.length; i++) {
 
-                                                                                                 
-              'Office_building': data[i].building
-              });
+                                     (function (i) {
+
+                            var topush = {
+                        
+
+                              'Office_Id': extractedData[i].id,
+
+                                                                                                          
+                       'Office_building': extractedData[i].building
+              
+                            };
+
+                              var defs = [];
+                              for (var ii = 0; ii < self.oneArray.length; ii++) {
+                               defs.push(new $.Deferred());
+                             }
+
+                             
+                                $.ajax({
+                                    type: "GET",
+                                    url: extractedData[i]._links.professorInOffice.href
+                                }).done(function (data0) {
+                                        topush['Office_professor'] = data0.id;
+                                        // alert(JSON.stringify(data0));
+                                        defs[0].resolve(true);
+
+                                    }
+                                // counter++;
+                                // if (counter == extractedData.length) {
+                                //     self.CourseObservableArray.sort(function (left, right) {
+                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
+                                //     });
+                                //     alert(JSON.stringify(self.CourseObservableArray()));
+                                // }
+
+                                // data = data0;
+                            ).fail(function (data0) {
+                                defs[0].resolve(false);
+                                // alert("failed");
+                                // self.CourseObservableArray.push({
+                                //     'Course_Id': extractedData[i].id,
+                                //     'Course_classroom': extractedData[i].classroom
+                                // });
+                                // counter++;
+                                // if (counter == extractedData.length) {
+                                //     self.CourseObservableArray.sort(function (left, right) {
+                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
+                                //     });
+                                //     alert(JSON.stringify(self.CourseObservableArray()));
+                                // }
+                            });
+                          
+
+                            $.when.apply($, defs).then(function() {
+                                self.OfficeObservableArray.push(topush);
+                                counter++;
+                                if (counter == extractedData.length) {
+                                    self.OfficeObservableArray.sort(function (left, right) {
+                                        return left.Office_Id == right.Office_Id ? 0 : (left.Office_Id < right.Office_Id ? -1 : 1)
+                                    });
+                                    // alert(JSON.stringify(self.CourseObservableArray()));
+                                }
+                            });
+
+                        })(i);
+
+
+
           }
-      });
+      })
 
+     };
   
 
-      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.OfficeObservableArray, {idAttribute: 'Office_Id'}));
+              self.addButtonClick=function(){
+                oj.Router.rootInstance.store({'page':"Office"});
+                oj.Router.rootInstance.go("AddOffice");
+//            alert('next');
+            };
+            self.editButtonClick=function(){
+
+                var element = document.getElementById('table');
+                var currentRow = element.currentRow;
+
+                var rowIndex = currentRow['rowIndex'];
+                var Office = vm.OfficeObservableArray()[rowIndex];
+                // alert("course id" + Course['Course_Id']);
+                // vm.inputCourseId(Course['Course_Id']);
+
+
+                // vm.inputCourseclassroom(Course['Course_classroom']);
+
+                var rootViewModel = ko.dataFor(document.getElementById('globalBody'));
+                rootViewModel.frontToEditData(
+                    {
+                    
+
+                      'id': Office.Office_Id,
+
+
+                                                                                                         
+                       'building': Office.Office_building         
+                    }
+                );
+
+
+
+                oj.Router.rootInstance.store({'page':"Office"});
+                oj.Router.rootInstance.go("EditOffice");
+//            alert('next');
+            };
+
+
+
+      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.OfficeObservableArray, {idAttribute: 'Office_Id', sortCriteria : [{key: 'Office_Id', direction: 'ascending'}]}));
+
 
       self.columnArray = [
                                             
@@ -53,169 +177,16 @@ function(oj, ko, $)
                     {"headerText": "Office building", "field": "Office_building", "headerStyle": 'font-weight:bold'},
                  
 
-          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align": right"}
+                  
+                    {"headerText": "Professor", "field": "Office_professor", "headerStyle": 'font-weight:bold'},
+                 
+
+          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align: right"}
 
           ];
 
 
-      self.editButtonClick = function(data, event){
-          //alert(DepartmentId);
-          self.editOrAdd("edit");
-          document.getElementById("buttontext").innerHTML = 'Update';
-          document.getElementById("dialogTitleId").innerHTML = 'Edit Office Record';
-          
-          document.querySelector('#modalDialog1').open();
-
-          return true;
-      };
-
-
-     self.closeDialog = function() {
-
-         var elementArray = [];
-
-                     
-                elementArray.push(document.getElementById("OfficebuildingInput"));
-
-          
-
-          var invalidflag=false;
-          for (var i=0; i<elementArray.length; i++) {
-              if (!(elementArray[i].valid === "valid")) {
-                  elementArray[i].showMessages();
-                  if (invalidflag==false) invalidflag = true;
-              }
-          }
-
-
-          //proceed to add or update record only if all input fields are valid
-          if(invalidflag==false) {
-
-          // if it is a adding action, do POST
-
-              if (self.editOrAdd() == "add") {
-                  self.addRow();
-              }
-
-
-              // if it is during an Editing action, do PUT
-
-              if (self.editOrAdd() == "edit") {
-                  // alert('updating');
-
-                  self.updateRow();
-
-              }
-
-              //closing dialog window
-              // alert('closing dialog');
-              document.querySelector('#modalDialog1').close();
-          }
-      };
-
-
-      self.addButtonClick = function () {
-
-          //
-          self.editOrAdd("add");
-
-          document.getElementById("buttontext").innerHTML = 'Add';
-          document.getElementById("dialogTitleId").innerHTML = 'Add Office Record';
-
-
-          //clear up input fields
-          self.inputOfficeId(null);
-                      self.inputOfficebuilding(null);
-          
-
-          document.querySelector('#modalDialog1').open();
-          return true;
-
-
-
-      };
-
-      //add to the observableArray
-      self.addRow = function () {
-          var Office = {
-              'Office_Id': self.inputOfficeId(),
-              
-              'Office_building': self.inputOfficebuilding()          
-            };
-
-          var Office2database = $.ajax({
-              type: "POST",
-              contentType: 'application/json',
-              url: "http://localhost:8080/api/Office",
-              data: JSON.stringify(
-                  {
-              'Id': self.inputOfficeId(),
-              
-              'building': self.inputOfficebuilding()
-
-                  }),
-              dataType: "json",
-              success: function (returndata) {
-                  console.log(returndata);
-                  self.OfficeObservableArray.push(
-                      {
-
-             'Office_Id': returndata.id,
-
-                                                                                                 
-              'Office_building': returndata.building
-                   
-                      });
-                  console.log('length' + self.OfficeObservableArray().length);
-
-              }
-          });
-
-
-      };
-
-
-      //used to update the fields based on the selected row
-      self.updateRow = function () {
-          var element = document.getElementById('table');
-          var currentRow = element.currentRow;
-
-          if (currentRow != null) {
-              // DO PUT
-              $.ajax({
-                  type: "PUT",
-                  contentType: 'application/json; charset=utf-8',
-                  url: "http://localhost:8080/api/Office/" + self.inputOfficeId(),
-                  data: JSON.stringify(
-                      {
-               'Id': self.inputOfficeId(),
-              
-              'building': self.inputOfficebuilding()
-                      }
-                  ),
-                  dataType: 'json',
-                  success: function (returndata) {
-                      console.log(returndata);
-                      self.OfficeObservableArray.splice(currentRow['rowIndex'], 1,
-                          {
-
-             'Office_Id': returndata.id,
-
-                                                                                                 
-              'Office_building': returndata.building
-                   
- 
-                          });
-
-                  }
-
-              })
-
-
-          }
-      };
-
-      //used to remove the selected row
+        //used to remove the selected row
       self.removeRow = function () {
           var element = document.getElementById('table');
           var currentRow = element.currentRow;
@@ -245,55 +216,11 @@ function(oj, ko, $)
 
 
 
-      //intialize the observable values in the forms
-      self.inputOfficeId = ko.observable();
-
-      
-      self.inputOfficebuilding = ko.observable();                                                                                         
-
-      self.editOrAdd = ko.observable();
-
-      self.currentRowListener = function(event)
-      {
-          var data = event.detail;
-          if (event.type == 'currentRowChanged' && data['value'] != null)
-          {
-              var rowIndex = data['value']['rowIndex'];
-              var Office = vm.OfficeObservableArray()[rowIndex];
-              vm.inputOfficeId(Office['Office_Id']);
-
-              
-              vm.inputOfficebuilding(Office['Office_building']);              
-
-              //console.log(event)
-              //alert("It is working")
-          }
-      };
-
-
-
 
   }
 
     var vm = new viewModel;
 
-
-
-
-
-
-  //alert("model create!")
-  
-//  $(document).ready
-//  (
-//    function()
-//    {
-//      //ko.applyBindings(vm, document.getElementById('tableDemo'));
-////      var table = document.getElementById('table');
-////      table.addEventListener('currentRowChanged', vm.currentRowListener);
-//        $('#table').on('currentRowChanged', vm.currentRowListener);
-//    }
-//  );
   
   return vm;
 });	

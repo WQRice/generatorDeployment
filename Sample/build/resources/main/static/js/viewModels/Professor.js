@@ -1,10 +1,7 @@
 
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+ 
 
 /**
  * Professor Table module
@@ -17,10 +14,37 @@ function(oj, ko, $)
       var self = this;
       //
 
+      self.oneArray = ["Office"];
+      self.manyArray = ["Course"];
+
+      self.attMap = {
+    "Office": {
+        "oneOrMany": "one",
+        "inputAttRef": "inputProfessorOfficeArray",
+        "attInSelfName": "officeInProfessor",
+        "selfInAttName": "professorInOffice",
+        "inputColumnArray": "inputOfficeColumnArray"
+    },
+    "Course": {
+        "oneOrMany": "many",
+        "inputAttRef": "inputProfessorCourseArray",
+        "attInSelfName": "courseInProfessor",
+        "selfInAttName": "professorInCourse",
+        "inputColumnArray": "inputCourseColumnArray"
+    }
+};
+
+
           self.ProfessorObservableArray = ko.observableArray();
+      
+
+      self.initialize = function() {
+
+      self.ProfessorObservableArray.removeAll();
 
 
-      $.get('http://localhost:8080/api/Professor',function(data) {
+
+      $.get('http://localhost:8080/Professor',function(data) {
           //alert(data);
           //console.log(data);
           //console.log(self.deptObservableArray());
@@ -28,24 +52,132 @@ function(oj, ko, $)
           //self.deptObservableArray([]);
           //console.log(self.deptObservableArray().length);
 
+          
+          var extractedData = data["_embedded"]["Professor"];
 
-          for (var i = 0; i < data.length; i++) {
-              console.log("add data");
+           var counter = 0;
 
-              self.ProfessorObservableArray.push({
 
-              'Professor_Id': data[i].id,
+          for (var i = 0; i < extractedData.length; i++) {
 
+                                     (function (i) {
+
+                            var topush = {
+                        
+
+                              'Professor_Id': extractedData[i].id,
+
+                       
+                      'Professor_firstName': extractedData[i].firstName,                                                                                                          
+                       'Professor_lastName': extractedData[i].lastName
               
-              'Professor_firstName': data[i].firstName,                                                                                               
-              'Professor_lastName': data[i].lastName
-              });
-          }
-      });
+                            };
 
+                              var defs = [];
+                              for (var ii = 0; ii < self.oneArray.length; ii++) {
+                               defs.push(new $.Deferred());
+                             }
+
+                             
+                                $.ajax({
+                                    type: "GET",
+                                    url: extractedData[i]._links.officeInProfessor.href
+                                }).done(function (data0) {
+                                        topush['Professor_office'] = data0.id;
+                                        // alert(JSON.stringify(data0));
+                                        defs[0].resolve(true);
+
+                                    }
+                                // counter++;
+                                // if (counter == extractedData.length) {
+                                //     self.CourseObservableArray.sort(function (left, right) {
+                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
+                                //     });
+                                //     alert(JSON.stringify(self.CourseObservableArray()));
+                                // }
+
+                                // data = data0;
+                            ).fail(function (data0) {
+                                defs[0].resolve(false);
+                                // alert("failed");
+                                // self.CourseObservableArray.push({
+                                //     'Course_Id': extractedData[i].id,
+                                //     'Course_classroom': extractedData[i].classroom
+                                // });
+                                // counter++;
+                                // if (counter == extractedData.length) {
+                                //     self.CourseObservableArray.sort(function (left, right) {
+                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
+                                //     });
+                                //     alert(JSON.stringify(self.CourseObservableArray()));
+                                // }
+                            });
+                          
+
+                            $.when.apply($, defs).then(function() {
+                                self.ProfessorObservableArray.push(topush);
+                                counter++;
+                                if (counter == extractedData.length) {
+                                    self.ProfessorObservableArray.sort(function (left, right) {
+                                        return left.Professor_Id == right.Professor_Id ? 0 : (left.Professor_Id < right.Professor_Id ? -1 : 1)
+                                    });
+                                    // alert(JSON.stringify(self.CourseObservableArray()));
+                                }
+                            });
+
+                        })(i);
+
+
+
+          }
+      })
+
+     };
   
 
-      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.ProfessorObservableArray, {idAttribute: 'Professor_Id'}));
+              self.addButtonClick=function(){
+                oj.Router.rootInstance.store({'page':"Professor"});
+                oj.Router.rootInstance.go("AddProfessor");
+//            alert('next');
+            };
+            self.editButtonClick=function(){
+
+                var element = document.getElementById('table');
+                var currentRow = element.currentRow;
+
+                var rowIndex = currentRow['rowIndex'];
+                var Professor = vm.ProfessorObservableArray()[rowIndex];
+                // alert("course id" + Course['Course_Id']);
+                // vm.inputCourseId(Course['Course_Id']);
+
+
+                // vm.inputCourseclassroom(Course['Course_classroom']);
+
+                var rootViewModel = ko.dataFor(document.getElementById('globalBody'));
+                rootViewModel.frontToEditData(
+                    {
+                    
+
+                      'id': Professor.Professor_Id,
+
+
+                      
+                      'firstName': Professor.Professor_firstName,                                                                                                          
+                       'lastName': Professor.Professor_lastName         
+                    }
+                );
+
+
+
+                oj.Router.rootInstance.store({'page':"Professor"});
+                oj.Router.rootInstance.go("EditProfessor");
+//            alert('next');
+            };
+
+
+
+      self.dataprovider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.ProfessorObservableArray, {idAttribute: 'Professor_Id', sortCriteria : [{key: 'Professor_Id', direction: 'ascending'}]}));
+
 
       self.columnArray = [
                                             
@@ -56,178 +188,16 @@ function(oj, ko, $)
                     {"headerText": "Professor lastName", "field": "Professor_lastName", "headerStyle": 'font-weight:bold'},
                  
 
-          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align": right"}
+                  
+                    {"headerText": "Office", "field": "Professor_office", "headerStyle": 'font-weight:bold'},
+                 
+
+          { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align: right"}
 
           ];
 
 
-      self.editButtonClick = function(data, event){
-          //alert(DepartmentId);
-          self.editOrAdd("edit");
-          document.getElementById("buttontext").innerHTML = 'Update';
-          document.getElementById("dialogTitleId").innerHTML = 'Edit Professor Record';
-          
-          document.querySelector('#modalDialog1').open();
-
-          return true;
-      };
-
-
-     self.closeDialog = function() {
-
-         var elementArray = [];
-
-                     
-                elementArray.push(document.getElementById("ProfessorfirstNameInput"));
-
-                     
-                elementArray.push(document.getElementById("ProfessorlastNameInput"));
-
-          
-
-          var invalidflag=false;
-          for (var i=0; i<elementArray.length; i++) {
-              if (!(elementArray[i].valid === "valid")) {
-                  elementArray[i].showMessages();
-                  if (invalidflag==false) invalidflag = true;
-              }
-          }
-
-
-          //proceed to add or update record only if all input fields are valid
-          if(invalidflag==false) {
-
-          // if it is a adding action, do POST
-
-              if (self.editOrAdd() == "add") {
-                  self.addRow();
-              }
-
-
-              // if it is during an Editing action, do PUT
-
-              if (self.editOrAdd() == "edit") {
-                  // alert('updating');
-
-                  self.updateRow();
-
-              }
-
-              //closing dialog window
-              // alert('closing dialog');
-              document.querySelector('#modalDialog1').close();
-          }
-      };
-
-
-      self.addButtonClick = function () {
-
-          //
-          self.editOrAdd("add");
-
-          document.getElementById("buttontext").innerHTML = 'Add';
-          document.getElementById("dialogTitleId").innerHTML = 'Add Professor Record';
-
-
-          //clear up input fields
-          self.inputProfessorId(null);
-                      self.inputProfessorfirstName(null);
-                      self.inputProfessorlastName(null);
-          
-
-          document.querySelector('#modalDialog1').open();
-          return true;
-
-
-
-      };
-
-      //add to the observableArray
-      self.addRow = function () {
-          var Professor = {
-              'Professor_Id': self.inputProfessorId(),
-              
-              'Professor_firstName': self.inputProfessorfirstName(),              
-              'Professor_lastName': self.inputProfessorlastName()          
-            };
-
-          var Professor2database = $.ajax({
-              type: "POST",
-              contentType: 'application/json',
-              url: "http://localhost:8080/api/Professor",
-              data: JSON.stringify(
-                  {
-              'Id': self.inputProfessorId(),
-              
-              'firstName': self.inputProfessorfirstName(),              
-              'lastName': self.inputProfessorlastName()
-
-                  }),
-              dataType: "json",
-              success: function (returndata) {
-                  console.log(returndata);
-                  self.ProfessorObservableArray.push(
-                      {
-
-             'Professor_Id': returndata.id,
-
-              
-              'Professor_firstName': returndata.firstName,                                                                                               
-              'Professor_lastName': returndata.lastName
-                   
-                      });
-                  console.log('length' + self.ProfessorObservableArray().length);
-
-              }
-          });
-
-
-      };
-
-
-      //used to update the fields based on the selected row
-      self.updateRow = function () {
-          var element = document.getElementById('table');
-          var currentRow = element.currentRow;
-
-          if (currentRow != null) {
-              // DO PUT
-              $.ajax({
-                  type: "PUT",
-                  contentType: 'application/json; charset=utf-8',
-                  url: "http://localhost:8080/api/Professor/" + self.inputProfessorId(),
-                  data: JSON.stringify(
-                      {
-               'Id': self.inputProfessorId(),
-              
-              'firstName': self.inputProfessorfirstName(),              
-              'lastName': self.inputProfessorlastName()
-                      }
-                  ),
-                  dataType: 'json',
-                  success: function (returndata) {
-                      console.log(returndata);
-                      self.ProfessorObservableArray.splice(currentRow['rowIndex'], 1,
-                          {
-
-             'Professor_Id': returndata.id,
-
-              
-              'Professor_firstName': returndata.firstName,                                                                                               
-              'Professor_lastName': returndata.lastName
-                   
- 
-                          });
-
-                  }
-
-              })
-
-
-          }
-      };
-
-      //used to remove the selected row
+        //used to remove the selected row
       self.removeRow = function () {
           var element = document.getElementById('table');
           var currentRow = element.currentRow;
@@ -257,57 +227,11 @@ function(oj, ko, $)
 
 
 
-      //intialize the observable values in the forms
-      self.inputProfessorId = ko.observable();
-
-      
-      self.inputProfessorfirstName = ko.observable();      
-      self.inputProfessorlastName = ko.observable();                                                                                         
-
-      self.editOrAdd = ko.observable();
-
-      self.currentRowListener = function(event)
-      {
-          var data = event.detail;
-          if (event.type == 'currentRowChanged' && data['value'] != null)
-          {
-              var rowIndex = data['value']['rowIndex'];
-              var Professor = vm.ProfessorObservableArray()[rowIndex];
-              vm.inputProfessorId(Professor['Professor_Id']);
-
-              
-              vm.inputProfessorfirstName(Professor['Professor_firstName']);              
-              vm.inputProfessorlastName(Professor['Professor_lastName']);              
-
-              //console.log(event)
-              //alert("It is working")
-          }
-      };
-
-
-
 
   }
 
     var vm = new viewModel;
 
-
-
-
-
-
-  //alert("model create!")
-  
-//  $(document).ready
-//  (
-//    function()
-//    {
-//      //ko.applyBindings(vm, document.getElementById('tableDemo'));
-////      var table = document.getElementById('table');
-////      table.addEventListener('currentRowChanged', vm.currentRowListener);
-//        $('#table').on('currentRowChanged', vm.currentRowListener);
-//    }
-//  );
   
   return vm;
 });	

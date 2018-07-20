@@ -48,7 +48,7 @@
     <!-- Template for rendering navigation items shared between nav bar and nav list -->
     <script type="text/html" id="navTemplate">
       <li><a href="#">
-        <span :class="[[$data['iconClass']]]"></span>
+        <!-- <span :class="[[$data['iconClass']]]"></span>-->
         <oj-bind-text value="[[$data['name']]]"></oj-bind-text>
       </a></li>
     </script>
@@ -87,15 +87,39 @@
                 <span>Application Navigation</span>
               </oj-button>
             </div>
-            <div class="oj-flex-bar-middle oj-sm-align-items-baseline">
-              <img src="css/images/rice-logo.png" alt = "rice logo" width="180">
+            <div class="oj-flex-bar-middle oj-sm-align-items-center">
+              <div style="float:left">
+              <img src="css/images/rice-logo.png" alt = "rice logo" width="180" style="margin-top:10px">
+               </div>
+
               <!-- <span role="img" class="oj-icon demo-oracle-icon" title="Rice Logo" alt="Rice Logo"></span>
               -->
-              <h1 class="oj-sm-only-hide oj-web-applayout-header-title" title="Application Name"><oj-bind-text value="[[appName]]"></oj-bind-text></h1>
+          <div id="paddingAppTitle" class="oj-sm-only-hide oj-web-applayout-header-title"
+                         style="float:left; padding-top:42px; font-size: 28px">
+              <oj-bind-text value="[[appName]]"></oj-bind-text>
+          </div>
+
             </div>
             <div class="oj-flex-bar-end">
               <!-- Responsive Toolbar -->
               <oj-toolbar>
+              
+              <oj-menu-button id="entityMenu" display="[[smScreen() ? 'icons' : 'all']]" chroming="half">
+              <span><oj-bind-text value="Menu"></oj-bind-text></span>
+              <span slot="endIcon" role="img" :class="[[{'oj-icon demo-appheader-menu': smScreen(), 'oj-component-icon oj-button-menu-dropdown-icon': !smScreen()}]]"></span>
+              <oj-menu id="menu0" slot="menu" style="display:none" on-oj-action="[[entityMenuItemAction]]">
+              
+                <oj-option id="Student" value="Student">Student</oj-option>
+                
+                <oj-option id="Course" value="Course">Course</oj-option>
+                
+                <oj-option id="Professor" value="Professor">Professor</oj-option>
+                
+                <oj-option id="Office" value="Office">Office</oj-option>
+                
+              </oj-menu>
+            </oj-menu-button>
+
                 <oj-menu-button id="userMenu" display="[[smScreen() ? 'icons' : 'all']]" chroming="half">
                   <span><oj-bind-text value="[[userLogin]]"></oj-bind-text></span>
                   <span slot="endIcon" :class="[[{'oj-icon demo-appheader-avatar': smScreen(), 'oj-component-icon oj-button-menu-dropdown-icon': !smScreen()}]]"></span>
@@ -109,16 +133,47 @@
               </oj-toolbar>
             </div>
           </div>
-          <div role="navigation" class="oj-web-applayout-max-width oj-web-applayout-navbar">
-            <oj-navigation-list class="oj-sm-only-hide oj-md-condense oj-md-justify-content-flex-start"
-                                data="[[navDataSource]]"
-                                edge="top"
-                                item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('navTemplate', true)]]"
-                                selection="{{router.stateId}}">
-            </oj-navigation-list>
-          </div>
-        </header>
-        <oj-module role="main" class="oj-web-applayout-max-width oj-web-applayout-content" config="[[moduleConfig]]">
+
+      <br/>
+
+    </header>
+
+     <header role="banner" class="oj-web-applayout-header" style="background-color:#004080">
+
+    <script type="text/html" id="entity_template">
+        <li class="oj-removable"><a href="#">
+          <!--<span :class="[[$data['iconClass']]] "></span>-->
+          <oj-bind-text value="[[$data['name']]]"></oj-bind-text>
+        </a></li>
+      </script>
+      <div role="navigation" class="oj-web-applayout-max-width oj-web-applayout-navbar" style="margin-left: 20px; margin-right:20px">
+        <div id="entityTabBar" class="oj-flex-item oj-sm-12 ">
+          <oj-tab-bar id="entityTab"
+                      class="oj-sm-condense"
+                      contextmenu="contextMenu" id="entityNavlist"
+                      overflow="popup"
+                      selection="{{selectedItem}}"
+                      current-item="{{currentItem}}"
+                      edge="top"
+                      style="height:45px"
+                      data="[[tabDataSource]]"
+                      item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('entity_template', true)]]"
+                      on-oj-remove="[[removeTab]]">
+            <oj-menu slot="contextMenu"
+                     style="display:none;"
+                     aria-label="Actions">
+              <oj-option data-oj-command="oj-tabbar-remove">
+                Removable
+              </oj-option>
+            </oj-menu>
+          </oj-tab-bar>
+        </div>
+      </div>
+      <oj-messages messages="[[message]]" position="{}" display="notification"></oj-messages>
+       </header>
+
+       <oj-module role="main" class="oj-web-applayout-max-width oj-web-applayout-content" config="[[moduleConfig]]">
+
         </oj-module>
         <footer class="oj-web-applayout-footer" role="contentinfo">
           <div class="oj-web-applayout-footer-item oj-web-applayout-max-width">
