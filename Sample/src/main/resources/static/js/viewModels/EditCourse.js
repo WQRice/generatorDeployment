@@ -1,7 +1,13 @@
+
+
+
+
 /**
- * Add course module
+ * Add Course module
  */
-define(['ojs/ojcore', 'knockout'
+
+
+define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 ], function (oj, ko) {
     /**
      * The view model for the main content view template
@@ -20,14 +26,16 @@ define(['ojs/ojcore', 'knockout'
             self.inputCourseId(rootViewModel.frontToEditData().id);
 
 
-            self.inputCourseclassroom(rootViewModel.frontToEditData().classroom);
+
+self.inputCourseclassroom(rootViewModel.frontToEditData().classroom);
+
 
             //input into the professor table in pop-up modial
 
 
             // for many to one relationship
             for (var i in self.oneArray) {
-                var url = 'http://localhost:8080/Course/'+self.inputCourseId()+"/"+self.attMap[self.oneArray[i]].attInCourseName;
+                var url = 'http://localhost:8080/Course/'+self.inputCourseId()+"/"+self.attMap[self.oneArray[i]].attInSelfName;
 
                 // alert(url);
                 self[self.attMap[self.oneArray[i]].inputAttRef].removeAll();
@@ -46,10 +54,8 @@ define(['ojs/ojcore', 'knockout'
 
                 // var toPushList = {};
                 for(var j in self.manyArray) {
-                    var url = 'http://localhost:8080/Course/'+self.inputCourseId()+"/"+self.attMap[self.manyArray[j]].attInCourseName;
+                    var url = 'http://localhost:8080/Course/'+self.inputCourseId()+"/"+self.attMap[self.manyArray[j]].attInSelfName;
 
-                    alert(url);
-                    // alert(url);
                     self[self.attMap[self.manyArray[j]].inputAttRef].removeAll();
 
                     getAssociatedAtt(url, function (output) {
@@ -65,30 +71,27 @@ define(['ojs/ojcore', 'knockout'
 
         };
 
-        self.oneArray = ["Professor"];
+self.oneArray = ["Professor"];
 
-        self.manyArray = ["TA"];
+self.manyArray = ["Student"];
 
-        self.attMap = {
-            Professor : {
-                oneOrMany : "one",
-                inputAttRef: "inputCourseProfessorArray",
-                attInCourseName: "professorInCourse",
-                courseInAttName: "courseInProfessor",
-                inputColumnArray : "inputProfessorColumnArray"
+self.attMap = {
+    "Professor": {
+        "oneOrMany": "one",
+        "inputAttRef": "inputCourseProfessorArray",
+        "attInSelfName": "professorInCourse",
+        "selfInAttName": "courseInProfessor",
+        "inputColumnArray": "inputProfessorColumnArray"
+    },
+    "Student": {
+        "oneOrMany": "many",
+        "inputAttRef": "inputCourseStudentArray",
+        "attInSelfName": "studentInCourse",
+        "selfInAttName": "courseInStudent",
+        "inputColumnArray": "inputStudentColumnArray"
+    }
+};
 
-
-            },
-            TA : {
-                oneOrMany : "many",
-                inputAttRef: "inputCourseTAArray",
-                attInCourseName: "tAInCourse",
-                courseInAttName: "courseInTA",
-                inputColumnArray : "inputTAColumnArray"
-
-            }
-
-        };
 
         self.curAtt = ko.observable("");
 
@@ -117,24 +120,33 @@ define(['ojs/ojcore', 'knockout'
         self.inputCourseId = ko.observable();
 
 
-        self.inputCourseclassroom = ko.observable();
+
+self.inputCourseclassroom = ko.observable();
 
 
-        // for many to one relationships
+// for  one array (many to one or one to one)
 
-        self.inputCourseProfessorArray = ko.observableArray().extend({ deferred: true });
-        // self.inputCourseProfessorArray = ko.observableArray();
-        self.inputProfessorDataProvider = new oj.ArrayDataProvider(self.inputCourseProfessorArray, {keyAttributes: 'id'});
 
-        self.inputProfessorColumnArray = [
+self.inputCourseProfessorArray = ko.observableArray().extend({ deferred: true });
+self.inputProfessorDataProvider = new oj.ArrayDataProvider(self.inputCourseProfessorArray, {keyAttributes: 'id'});
 
-            {"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
+self.inputProfessorColumnArray = [
 
-            {"headerText": "firstName", "field": "firstName", "headerStyle": 'font-weight:bold'},
+{"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
 
-            {"headerText": "lastName", "field": "lastName", "headerStyle": 'font-weight:bold'}
+{
+"headerText": "firstName",
+"field" : "firstName",
+"headerStyle" : 'font-weight:bold'
+}
+,
+{
+"headerText": "lastName",
+"field" : "lastName",
+"headerStyle" : 'font-weight:bold'
+}
+];
 
-        ];
 
         self.attObservableArray = ko.observableArray();
 
@@ -156,21 +168,36 @@ define(['ojs/ojcore', 'knockout'
         // {"headerText": "lastName", "field": "lastName", "headerStyle": 'font-weight:bold'}
         // ];
 
-        // --------- for many to one relationships
+// for  many array (one to many or many to many)
 
-        self.inputCourseTAArray = ko.observableArray().extend({ deferred: true });
-        // self.inputCourseProfessorArray = ko.observableArray();
-        self.inputTADataProvider = new oj.ArrayDataProvider(self.inputCourseTAArray, {keyAttributes: 'id'});
 
-        self.inputTAColumnArray = [
 
-            {"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
+self.inputCourseStudentArray = ko.observableArray().extend({ deferred: true });
+self.inputStudentDataProvider = new oj.ArrayDataProvider(self.inputCourseStudentArray, {keyAttributes: 'id'});
 
-            {"headerText": "firstName", "field": "firstName", "headerStyle": 'font-weight:bold'},
+self.inputStudentColumnArray = [
 
-            {"headerText": "lastName", "field": "lastName", "headerStyle": 'font-weight:bold'}
+{"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
 
-        ];
+{
+"headerText": "studentId",
+"field" : "studentId",
+"headerStyle" : 'font-weight:bold'
+}
+,
+{
+"headerText": "firstName",
+"field" : "firstName",
+"headerStyle" : 'font-weight:bold'
+}
+,
+{
+"headerText": "lastName",
+"field" : "lastName",
+"headerStyle" : 'font-weight:bold'
+}
+];
+
 
         self.selectAttColumnArray_multi = ko.observable();
 
@@ -192,21 +219,7 @@ define(['ojs/ojcore', 'knockout'
             });
         }
 
-        function getAssociatedProfessorList(url, professorInput) {
 
-            // var data ={};
-            $.ajax({
-                type:"GET",
-                url: url
-            })
-                .done(function (data0) {
-
-                    professorInput.push(data0["_embedded"]);
-
-                }).fail(function (data1){
-                // professorInput(null);
-            });
-        }
 
         self.selectAttributeinEditDialog = function(data, event) {
 
@@ -216,8 +229,6 @@ define(['ojs/ojcore', 'knockout'
 
 
             self.curAtt(data.substring(4));
-            alert(self.curAtt());
-            alert(self.selectAllDisabled());
             self.attObservableArray.removeAll();
 
 
@@ -255,7 +266,6 @@ define(['ojs/ojcore', 'knockout'
 
             callback().then(
             $.get('http://localhost:8080/'+self.curAtt(), function (data) {
-                alert(JSON.stringify(data));
                 //console.log(data);
                 //console.log(self.deptObservableArray());
 
@@ -313,7 +323,6 @@ define(['ojs/ojcore', 'knockout'
                         }
 
                         if (row.index == totalSize - 1) {
-                            alert("selection set");
                             document.getElementById(selectAttTable).selection = selectionObj;
                         }
                     });
@@ -330,21 +339,11 @@ define(['ojs/ojcore', 'knockout'
 
         };
 
-        // self.modalAddProfessorColumnArray = [
-        //
-        //     {"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
-        //
-        //     {"headerText": "firstName", "field": "firstName", "headerStyle": 'font-weight:bold'},
-        //
-        //     {"headerText": "lastName", "field": "lastName", "headerStyle": 'font-weight:bold'}
-        //
-        // ];
 
         self.selectionListener_single = function(event)
         {
 
-            alert(JSON.stringify(event.detail.previousValue));
-            alert('selectionlistner-single');
+            //alert('selectionlistner-single');
             var data = event.detail;
 
 
@@ -354,7 +353,7 @@ define(['ojs/ojcore', 'knockout'
                 for (var i = 0; i < totalSize; i++) {
                     self.attArraydataprovider.at(i).then(function (row) {
                         var oldObj = document.getElementById('selectAttTable_single').selection;
-                        alert(JSON.stringify(oldObj));
+                        //alert(JSON.stringify(oldObj));
 
                         for (var j=0; j<oldObj.length; j++) {
                             if(oldObj[j].startIndex.row === row.index){
@@ -402,8 +401,8 @@ define(['ojs/ojcore', 'knockout'
         self.selectionListener_multi = function(event)
         {
 
-            alert(JSON.stringify(event.detail.previousValue));
-            alert('selectionlistner-multi');
+            //alert(JSON.stringify(event.detail.previousValue));
+            //alert('selectionlistner-multi');
             var data = event.detail;
 
             if (data != null) {
@@ -466,7 +465,7 @@ define(['ojs/ojcore', 'knockout'
             event.stopPropagation();
 
             if(self.selectAllDisabled()) {
-                alert("synccheckbox single");
+                //alert("synccheckbox single");
 
                 setTimeout(function () {
                     // sync the checkboxes with selection obj
@@ -495,7 +494,7 @@ define(['ojs/ojcore', 'knockout'
                 }, 0);
 
             } else {
-                alert("synccheckbox multi");
+                //alert("synccheckbox multi");
 
 
                 if (event.currentTarget.id != 'table_checkboxset_hdr_multi') {
@@ -604,8 +603,10 @@ define(['ojs/ojcore', 'knockout'
             var elementArray = [];
 
 
-            elementArray.push(document.getElementById("CourseclassroomInput"));
 
+        
+        elementArray.push(document.getElementById("CourseclassroomInput"));
+        
 
 
 
@@ -640,8 +641,11 @@ define(['ojs/ojcore', 'knockout'
                     {
                         'Id': self.inputCourseId(),
 
-                        'classroom': self.inputCourseclassroom()
-                    }
+                        
+                        'classroom' : self.inputCourseclassroom()
+                        
+                        
+        }
                 ),
                 dataType: 'json',
                 success: function (returndata) {
@@ -660,17 +664,20 @@ define(['ojs/ojcore', 'knockout'
 
             var queuechain1 =defs[0];
             var queuechain2 =defs[1];
+
+
+            if (self.manyArray.length == 0) {
+            defs[0].resolve(true);
+            }
+
+
             for (var j in self.manyArray) {
 
                 var inputAttRefMany = self.attMap[self.manyArray[j]].inputAttRef;
 
 
-                var attAssociationUrl = "http://localhost:8080/Course/" + self.inputCourseId() + "/" + self.attMap[self.manyArray[j]].attInCourseName;
+                var attAssociationUrl = "http://localhost:8080/Course/" + self.inputCourseId() + "/" + self.attMap[self.manyArray[j]].attInSelfName;
                 var attUrl = "http://localhost:8080/"+self.manyArray[j];
-
-                // var oldList = {};
-                // getAssociatedProfessorList(attAssociationUrl, oldList);
-
 
 
                 $.ajax({
@@ -683,7 +690,7 @@ define(['ojs/ojcore', 'knockout'
                         //     queuechain = q;
 
                         var oldList = data0["_embedded"];
-                        alert("old list" + JSON.stringify(oldList));
+                        //alert("old list" + JSON.stringify(oldList));
 
                         // var foundInOld = false;
                         // var foundInNew = false;
@@ -705,17 +712,17 @@ define(['ojs/ojcore', 'knockout'
                                 //need to delete the old relationship
                                 queuechain1 = queuechain1.then(
                                     $.ajax({
-                                        url: "http://localhost:8080/Course/" + self.inputCourseId() + "/" + self.attMap[self.manyArray[j]].attInCourseName +"/" + oldList[self.manyArray[j]][i].id,
+                                        url: "http://localhost:8080/Course/" + self.inputCourseId() + "/" + self.attMap[self.manyArray[j]].attInSelfName +"/" + oldList[self.manyArray[j]][i].id,
 
                                         type: "DELETE",
                                         success: function (response) {
-                                            alert("delete success");
+                                            //alert("delete success");
 
                                         },
 
                                         error: function (e) {
                                             console.log(e);
-                                            alert("delete failed");
+                                            //alert("delete failed");
 
                                         }
                                     })
@@ -728,13 +735,13 @@ define(['ojs/ojcore', 'knockout'
                                         url: "http://localhost:8080/"+self.manyArray[j]+"/" + oldList[self.manyArray[j]][i].id + "/courseIn" + self.manyArray[j]+"/" + self.inputCourseId(),
                                         type: "DELETE",
                                         success: function (response) {
-                                            alert("delete success");
+                                            //alert("delete success");
                                             console.log(response);
 
                                         },
                                         error: function (e) {
                                             console.log(e);
-                                            alert("delete failed");
+                                            //alert("delete failed");
                                         }
                                     })
                                 );
@@ -743,8 +750,8 @@ define(['ojs/ojcore', 'knockout'
 
                         }
 
-                        alert(inputAttRefMany);
-                        alert("input length many" +JSON.stringify(self[inputAttRefMany]()));
+                        //alert(inputAttRefMany);
+                        //alert("input length many" +JSON.stringify(self[inputAttRefMany]()));
 
                             for (var jj = 0; jj < self[inputAttRefMany]().length; jj++) {
 
@@ -760,19 +767,19 @@ define(['ojs/ojcore', 'knockout'
 
                                     }
                                 }
-                                alert("overlap"+overlap);
+                                //alert("overlap"+overlap);
 
                                 if (overlap != true) {
                                     //post the newly added
-                                    alert("start post because not overlap");
+                                    //alert("start post because not overlap");
                                     var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/" + self.manyArray[j] + "/" + self[inputAttRefMany]()[jj].id;
-                                    alert("post many" + associationUrl);
+                                    //alert("post many" + associationUrl);
                                     queuechain1 = queuechain1.then(
                                         $.ajax({
                                             type: "POST",
                                             url: associationUrl,
                                             success: function (returndata) {
-                                                alert("connection success many");
+                                               // alert("connection success many");
 
                                             },
                                             error: function (xhr) {
@@ -792,143 +799,10 @@ define(['ojs/ojcore', 'knockout'
                             );
                             defs[0].resolve(true);
                         }
-                        //
-                        //
-                        // queuechain.done(
-                        //     function(){
-                        //
-                        //     }
-                        // );
-                        // q.resolve();
-
-                        // for (var jj = 0; jj < self[inputAttRef]().length; jj++) {
-                        //     if (id === self[inputAttRef]()[jj].id) {
-                        //         //
-                        //         foundInNew = true;
-                        //     }
-                        // }
-                        // getAjax(attUrl, function (output) {
-                        //     var q = jQuery.Deferred(),
-                        //         queuechain = q;
-                        //
-                        //     for (var k = 0; k < output["_embedded"][self.manyArray[j]].length; k++) {
-                        //         var foundInOld = false;
-                        //         var foundInNew = false;
-                        //         var id = output["_embedded"][self.manyArray[j]][k].id; // this id is in the list of available list
-                        //
-                        //
-                        //         for (var i = 0; i < oldList[self.manyArray[j]].length; i++) {
-                        //             if (id === oldList[self.manyArray[j]][i].id) {
-                        //                 //
-                        //                 foundInOld = true;
-                        //             }
-                        //         }
-                        //
-                        //         for (var jj = 0; jj < self[inputAttRef]().length; jj++) {
-                        //             if (id === self[inputAttRef]()[jj].id) {
-                        //                 //
-                        //                 foundInNew = true;
-                        //             }
-                        //         }
-                        //
-                        //         if (foundInOld && !foundInNew) {
-                        //             //need to delete it
-                        //             queuechain = queuechain.then(
-                        //                 $.ajax({
-                        //                     url: "http://localhost:8080/Course/" + self.inputCourseId() + "/" + self.attMap[self.manyArray[j]].attInCourseName +"/" + id,
-                        //
-                        //                     type: "DELETE",
-                        //                     success: function (response) {
-                        //                         alert("delete success");
-                        //
-                        //                     },
-                        //
-                        //                     error: function (e) {
-                        //                         console.log(e);
-                        //                         alert("delete failed");
-                        //
-                        //                     }
-                        //                 })
-                        //             );
-                        //
-                        //
-                        //             //delete from the other direction
-                        //             queuechain = queuechain.then(
-                        //                 $.ajax({
-                        //                     url: "http://localhost:8080/"+self.manyArray[j]+"/" + id + "/courseIn" + self.manyArray[j]+"/" + self.inputCourseId(),
-                        //                     type: "DELETE",
-                        //                     success: function (response) {
-                        //                         alert("delete success");
-                        //                         console.log(response);
-                        //
-                        //                     },
-                        //                     error: function (e) {
-                        //                         console.log(e);
-                        //                         alert("delete failed");
-                        //                     }
-                        //                 })
-                        //             );                                }
-                        //
-                        //         if (!foundInOld && foundInNew) {
-                        //             //post association for one direction first
-                        //             var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/"+ self.manyArray[j]+"/" + id;
-                        //             queuechain = queuechain.then(
-                        //             $.ajax({
-                        //                 type: "POST",
-                        //                 url: associationUrl,
-                        //                 success: function (returndata) {
-                        //                     alert("connection success");
-                        //
-                        //                 },
-                        //                 error: function (xhr) {
-                        //                     console.log('error', xhr);
-                        //                 }
-                        //             })
-                        //             );
-                        //
-                        //
-                        //             // var data = attUrl+"/"+id;
-                        //             // self.postRelation(attAssociationUrl, data);
-                        //             //
-                        //             // //then, add association reversely
-                        //             // var attAssociationUrlReverse = attUrl+"/"+id+"/"+self.attMap["Professor"].courseInAttName;
-                        //             // var dataReverse ="http://localhost:8080/Course/"+self.inputCourseId();
-                        //             // self.putRelation(attAssociationUrlReverse, dataReverse);
-                        //         }
-                        //
-                        //     }
-                        // });
 
 
                     }).fail(function (data1){
-                    //     alert("fail get for many");
-                    //
-                    // for (var jj = 0; jj < self[inputAttRefMany]().length; jj++) {
-                    //
-                    //     var q = jQuery.Deferred(),
-                    //         queuechain = q;
-                    //
-                    //         //post the newly added
-                    //         var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/"+ self.manyArray[j]+"/" + self[inputAttRefMany]()[jj].id;
-                    //         queuechain = queuechain.then(
-                    //             $.ajax({
-                    //                 type: "POST",
-                    //                 url: associationUrl,
-                    //                 success: function (returndata) {
-                    //                     alert("connection success");
-                    //
-                    //                 },
-                    //                 error: function (xhr) {
-                    //                     console.log('error', xhr);
-                    //                 }
-                    //             })
-                    //         )
-                    //     }
-                    //     queuechain.done(
-                    //         function(){
-                    //         }
-                    //     );
-                    // q.resolve();
+
                     if (j==self.manyArray.length-1) {
                         queuechain1.done(
                             function () {
@@ -953,6 +827,9 @@ define(['ojs/ojcore', 'knockout'
 
 
 
+            if (self.oneArray.length == 0) {
+            defs[1].resolve(true);
+            }
 
 
             for (var j in self.oneArray) {
@@ -964,19 +841,18 @@ define(['ojs/ojcore', 'knockout'
 
                     var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/" + self.oneArray[j] + "/" + self[inputAttRef]()[0].id;
 
-                    alert(associationUrl);
+                   // alert(associationUrl);
                     queuechain2 = queuechain2.then(
                         $.ajax({
                             type: "POST",
                             url: associationUrl,
                             success: function () {
-                                alert("connection success one");
-                                // oj.Router.rootInstance.go("Course");
+                               // alert("connection success one");
 
                             },
                             error: function (xhr) {
                                 console.log('error', xhr);
-                                alert("connection failed");
+                                //alert("connection failed");
                             }
                         }));
 
@@ -995,14 +871,14 @@ define(['ojs/ojcore', 'knockout'
                     // queuechain1.done();
                     // q1.resolve();
                  else {
-                    var attAssociationUrl = "http://localhost:8080/Course/" + self.inputCourseId() + "/" + self.attMap[self.oneArray[j]].attInCourseName;
+                    var attAssociationUrl = "http://localhost:8080/Course/" + self.inputCourseId() + "/" + self.attMap[self.oneArray[j]].attInSelfName;
 
                     $.ajax({
                         type: "GET",
                         url: attAssociationUrl
                     }).done(
                         function (output) {
-                            alert(JSON.stringify(output));
+                           // alert(JSON.stringify(output));
                             // var q = jQuery.Deferred(),
                             //     queuechain = q;
 
@@ -1011,13 +887,13 @@ define(['ojs/ojcore', 'knockout'
                                     url: attAssociationUrl,
                                     type: "DELETE",
                                     success: function (response) {
-                                        alert("delete success one");
+                                      //  alert("delete success one");
 
                                     },
 
                                     error: function (e) {
                                         console.log(e);
-                                        alert("delete failed");
+                                      //  alert("delete failed");
 
                                     }
                                 })
@@ -1029,13 +905,13 @@ define(['ojs/ojcore', 'knockout'
                                     url: "http://localhost:8080/"+ self.oneArray[j]+"/" + output.id + "/courseIn" + self.oneArray[j]+"/" + self.inputCourseId(),
                                     type: "DELETE",
                                     success: function (response) {
-                                        alert("delete success one");
+                                      //  alert("delete success one");
                                         console.log(response);
 
                                     },
                                     error: function (e) {
                                         console.log(e);
-                                        alert("delete failed one");
+                                      //  alert("delete failed one");
                                     }
                                 })
                             );
@@ -1073,110 +949,7 @@ define(['ojs/ojcore', 'knockout'
 
 
 
-                    // $.ajax({
-                    //     type: "GET",
-                    //     url: attAssociationUrl
-                    // }).done(
-                    //     // if (output != null) {
-                    //     function (output) {
-                    //         alert(JSON.stringify(output));
-                    //         var q = jQuery.Deferred(),
-                    //             queuechain = q;
-                    //
-                    //         queuechain = queuechain.then(
-                    //             $.ajax({
-                    //                 url: "http://localhost:8080/Course/" + self.inputCourseId() + "/professorInCourse/",
-                    //                 type: "DELETE",
-                    //                 success: function (response) {
-                    //                     alert("delete success");
-                    //
-                    //                 },
-                    //
-                    //                 error: function (e) {
-                    //                     console.log(e);
-                    //                     alert("delete failed");
-                    //
-                    //                 }
-                    //             }));
-                    //
-                    //         queuechain = queuechain.then(
-                    //             $.ajax({
-                    //                 url: "http://localhost:8080/Professor/" + output.id + "/courseInProfessor/" + self.inputCourseId(),
-                    //                 type: "DELETE",
-                    //                 success: function (response) {
-                    //                     alert("delete success");
-                    //                     console.log(response);
-                    //
-                    //                 },
-                    //                 error: function (e) {
-                    //                     console.log(e);
-                    //                     alert("delete failed");
-                    //                 }
-                    //             })
-                    //         );
-                    //
-                    //         queuechain.done(function () {
-                    //                 var q1 = jQuery.Deferred(),
-                    //                     queuechain1 = q1;
-                    //                 if (self[inputAttRef]().length > 0) {
-                    //
-                    //                     var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/Professor/" + self[inputAttRef]()[0].id;
-                    //
-                    //                     alert(associationUrl);
-                    //                     queuechain1 = queuechain1.then($.ajax({
-                    //                             type: "POST",
-                    //                             url: associationUrl,
-                    //                             success: function () {
-                    //                                 alert("connection success");
-                    //
-                    //                             },
-                    //                             error: function (xhr) {
-                    //                                 console.log('error', xhr);
-                    //                                 alert("connection failed");
-                    //                             }
-                    //                         })
-                    //                     );
-                    //
-                    //                     queuechain1.done();
-                    //                     q1.resolve();
-                    //                 }
-                    //             }
-                    //         );
-                    //
-                    //         q.resolve();
-                    //
-                    //     }
-                    // ).fail(function () {
-                    //     var q1 = jQuery.Deferred(),
-                    //         queuechain1 = q1;
-                    //
-                    //     if (self[inputAttRef]().length > 0) {
-                    //
-                    //         var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/Professor/" + self[inputAttRef]()[0].id;
-                    //
-                    //         alert(associationUrl);
-                    //         queuechain1 = queuechain1.then($.ajax({
-                    //                 type: "POST",
-                    //                 url: associationUrl,
-                    //                 success: function () {
-                    //                     alert("connection success");
-                    //
-                    //                 },
-                    //                 error: function (xhr) {
-                    //                     console.log('error', xhr);
-                    //                     alert("connection failed");
-                    //                 }
-                    //             })
-                    //         );
-                    //
-                    //         // var data = attUrl + "/" + self[inputAttRef]()[0].id;
-                    //         // self.putRelation(attAssociationUrl, data);
-                    //         // }
-                    //     }
-                    //     queuechain1.done();
-                    //     q1.resolve();
-                    //
-                    // })
+
                 }
 
 
@@ -1198,7 +971,7 @@ define(['ojs/ojcore', 'knockout'
 
 
         self.backButtonClick=function(){
-            alert("hi, I going back to page: "+oj.Router.rootInstance.retrieve().page);
+            //alert("hi, I going back to page: "+oj.Router.rootInstance.retrieve().page);
             oj.Router.rootInstance.go("Course");
         }
 
@@ -1210,19 +983,7 @@ define(['ojs/ojcore', 'knockout'
     (
         function()
         {
-//                 //ko.applyBindings(vm, document.getElementById('tableDemo'));
-// //      var table = document.getElementById('table');
-// //      table.addEventListener('currentRowChanged', vm.currentRowListener);
-// //        $('#table').on('currentRowChanged', vm.currentRowListener);
-//                 var table_single = document.getElementById('selectAttTable_single');
-//                 // ko.applyBindings(vm, table);
-//                 // table_single.addEventListener('selectionChanged', vm.selectionListener_single);
-//                 var table_multi = document.getElementById('selectAttTable_multi');
-//                 // ko.applyBindings(vm, table);
-//                 // table_multi.addEventListener('selectionChanged', vm.selectionListener_multi);
-//                 // // $('#selectionButton').on('click', vm.currentSelection);
-//             $('#selectAttTable_single').on('click', '.oj-checkboxset', vm.syncCheckboxes);
-            // $('#selectAttTable_multi').on('click', '.oj-checkboxset', vm.syncCheckboxes);
+
 
         }
     );

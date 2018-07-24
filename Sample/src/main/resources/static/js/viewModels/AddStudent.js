@@ -6,7 +6,7 @@
 * Add Student module
 */
 
-define(['ojs/ojcore', 'knockout'
+define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 ], function (oj, ko) {
     /**
      * The view model for the main content view template
@@ -18,7 +18,7 @@ define(['ojs/ojcore', 'knockout'
 
         self.initialize = function () {
 
-            // alert(self.userName);
+            ////// alert(self.userName);
         
         self.inputStudentstudentId(null);
         
@@ -102,7 +102,7 @@ define(['ojs/ojcore', 'knockout'
         self.selectAttColumnArray_single = ko.observable();
 
 
-        // --------- for many to one relationships
+// for  many array (one to many or many to many)
 
 
 
@@ -131,13 +131,13 @@ define(['ojs/ojcore', 'knockout'
         self.selectAttributeinEditDialog = function(data, event) {
 
             // document.getElementById('selectAttTable').selection = [];
-            // alert("open nested popup");
-            // alert(self.selectAllDisabled());
+            ////// alert("open nested popup");
+            ////// alert(self.selectAllDisabled());
 
 
             self.curAtt(data.substring(4));
-            alert(self.curAtt());
-            alert(self.selectAllDisabled());
+           //// alert(self.curAtt());
+           //// alert(self.selectAllDisabled());
 
             // self.selectAllDisabled(self.attMap[self.curAtt()].oneOrMany === "one");
             // self.selectAllDisabled(true);
@@ -184,17 +184,17 @@ define(['ojs/ojcore', 'knockout'
 
             callback().then(
             $.get('http://localhost:8080/'+self.curAtt(), function (data) {
-                alert(JSON.stringify(data));
+               //// alert(JSON.stringify(data));
                 //console.log(data);
 
                 // for (var i = 0; i < data.length; i++) {
                 var extractedData = data["_embedded"][self.curAtt()];
-                // alert(JSON.stringify(extractedData));
+                //// alert(JSON.stringify(extractedData));
 
 
                 for (var i = 0; i < extractedData.length; i++) {
-                    // alert(i);
-                    // alert("test");
+                    //// alert(i);
+                    //// alert("test");
 
                     var topush = JSON.parse(JSON.stringify(extractedData[i]));
                     delete topush["_links"];
@@ -208,8 +208,8 @@ define(['ojs/ojcore', 'knockout'
                     // };
 
                     var inputAttRef = self.attMap[self.curAtt()].inputAttRef;
-                    // alert("topush"+JSON.stringify(topush));
-                    // alert(JSON.stringify(self[inputAttRef]()));
+                    //// alert("topush"+JSON.stringify(topush));
+                    //// alert(JSON.stringify(self[inputAttRef]()));
                     if (self[inputAttRef]()!=null) {
                         for (var j = 0; j < self[inputAttRef]().length; j++) {
                             if (self[inputAttRef]()[j].id == topush.id) {
@@ -219,7 +219,7 @@ define(['ojs/ojcore', 'knockout'
                     }
 
                     self.attObservableArray.push(topush);
-                    // alert(JSON.stringify(self.attObservableArray()));
+                    //// alert(JSON.stringify(self.attObservableArray()));
                     self.attArraydataprovider = new oj.ArrayTableDataSource(self.attObservableArray, {keyAttributes: 'id'});
 
                 }
@@ -248,21 +248,13 @@ define(['ojs/ojcore', 'knockout'
 
         };
 
-        // self.modalAddProfessorColumnArray = [
-        //
-        //     {"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
-        //
-        //     {"headerText": "firstName", "field": "firstName", "headerStyle": 'font-weight:bold'},
-        //
-        //     {"headerText": "lastName", "field": "lastName", "headerStyle": 'font-weight:bold'}
-        //
-        // ];
+
 
         self.selectionListener_single = function(event)
         {
 
-            // alert(JSON.stringify(event.detail.previousValue));
-            alert('selectionlistner');
+            //// alert(JSON.stringify(event.detail.previousValue));
+           // alert('selectionlistner');
             var data = event.detail;
 
 
@@ -272,7 +264,7 @@ define(['ojs/ojcore', 'knockout'
                 for (var i = 0; i < totalSize; i++) {
                     self.attArraydataprovider.at(i).then(function (row) {
                         var oldObj = document.getElementById('selectAttTable_single').selection;
-                        alert(oldObj);
+                       // alert(oldObj);
 
                         for (var j=0; j<oldObj.length; j++) {
                             if(oldObj[j].startIndex.row === row.index){
@@ -293,7 +285,7 @@ define(['ojs/ojcore', 'knockout'
                     self.attArraydataprovider.at(i).then(function (row) {
                         var foundInSelection = false;
                         if (selectionObj) {
-                            // alert(JSON.stringify(selectionObj));
+                            //// alert(JSON.stringify(selectionObj));
                             for (var j = 0; j < selectionObj.length; j++) {
                                 var range = selectionObj[j];
                                 var startIndex = range.startIndex;
@@ -320,8 +312,8 @@ define(['ojs/ojcore', 'knockout'
         self.selectionListener_multi = function(event)
         {
 
-            // alert(JSON.stringify(event.detail.previousValue));
-            // alert('selectionlistner');
+            //// alert(JSON.stringify(event.detail.previousValue));
+            //// alert('selectionlistner');
             var data = event.detail;
 
             if (data != null) {
@@ -332,7 +324,7 @@ define(['ojs/ojcore', 'knockout'
                     self.attArraydataprovider.at(i).then(function (row) {
                         var foundInSelection = false;
                         if (selectionObj) {
-                            // alert(JSON.stringify(selectionObj));
+                            //// alert(JSON.stringify(selectionObj));
                             for (j = 0; j < selectionObj.length; j++) {
                                 var range = selectionObj[j];
                                 var startIndex = range.startIndex;
@@ -357,7 +349,7 @@ define(['ojs/ojcore', 'knockout'
         };
         self.selectAllListener = function(event)
         {
-            // alert("selectall");
+            //// alert("selectall");
             if (self._clearCheckboxHdr)
             {
                 return;
@@ -379,8 +371,8 @@ define(['ojs/ojcore', 'knockout'
         };
         self.syncCheckboxes = function(event)
         {
-            // alert("sync");
-            // alert(JSON.stringify(event));
+            //// alert("sync");
+            //// alert(JSON.stringify(event));
             event.stopPropagation();
 
             if(self.selectAllDisabled()) {
@@ -405,7 +397,7 @@ define(['ojs/ojcore', 'knockout'
 
                             if (row.index == totalSize - 1) {
                                 document.getElementById('selectAttTable_single').selection = selectionObj;
-                                // alert("selectionobj after sync"+ JSON.stringify(selectionObj));
+                                //// alert("selectionobj after sync"+ JSON.stringify(selectionObj));
                             }
                         });
                     }
@@ -433,7 +425,7 @@ define(['ojs/ojcore', 'knockout'
 
                             if (row.index == totalSize - 1) {
                                 document.getElementById('selectAttTable_multi').selection = selectionObj;
-                                // alert("selectionobj after sync"+ JSON.stringify(selectionObj));
+                                //// alert("selectionobj after sync"+ JSON.stringify(selectionObj));
                             }
                         });
                     }
@@ -494,13 +486,13 @@ define(['ojs/ojcore', 'knockout'
 
                     var rowIndex = selection[i].startIndex.row;
                     var selected = self.attObservableArray()[rowIndex];
-                    // alert(JSON.stringify(self.attObservableArray()));
+                    //// alert(JSON.stringify(self.attObservableArray()));
                     self[self.attMap[self.curAtt()].inputAttRef].push(selected);
 
                     // self.inputCourseProfessorArray.push(selected);
-                    // alert(JSON.stringify(self.inputCourseProfessorArray()));
+                    //// alert(JSON.stringify(self.inputCourseProfessorArray()));
 
-                    // alert(JSON.stringify(selected));
+                    //// alert(JSON.stringify(selected));
                 }
 
 
@@ -600,18 +592,18 @@ define(['ojs/ojcore', 'knockout'
                             if (self[inputAttRef]().length > 0) {
 
                                 var associationUrl = "http://localhost:8080/api/Student/" + returndata.id + "/"+ self.oneArray[j]+ "/" + self[inputAttRef]()[0].id;
-                                alert(associationUrl);
+                               // alert(associationUrl);
                                 queuechain = queuechain.then( function () {
                                     $.ajax({
                                             type: "POST",
                                             url: associationUrl,
                                             success: function () {
-                                                alert("connection success one");
+                                               // alert("connection success one");
 
                                             },
                                             error: function (xhr) {
                                                 console.log('error', xhr);
-                                                alert("connection failed");
+                                               // alert("connection failed");
                                             }
                                         }
                                     );
@@ -628,7 +620,7 @@ define(['ojs/ojcore', 'knockout'
 
                     for (var j in self.manyArray) {
                         var inputAttRef = self.attMap[self.manyArray[j]].inputAttRef;
-                        alert(self[inputAttRef]().length);
+                       // alert(self[inputAttRef]().length);
 
                         if (self[inputAttRef]().length > 0) {
 
@@ -639,19 +631,19 @@ define(['ojs/ojcore', 'knockout'
                                 (function (i) {
 
                                     var associationUrl = "http://localhost:8080/api/Student/" + returndata.id + "/" + self.manyArray[j] + "/" + self[inputAttRef]()[i].id;
-                                    alert(associationUrl);
+                                   // alert(associationUrl);
                                     queuechain = queuechain.then(function () {
                                             return $.ajax({
                                                     type: "POST",
                                                     url: associationUrl
                                                     ,
                                                     success: function () {
-                                                        alert("connection success many" + associationUrl);
+                                                       // alert("connection success many" + associationUrl);
 
                                                     },
                                                     error: function (xhr) {
                                                         console.log('error', xhr);
-                                                        alert("connection failed");
+                                                       // alert("connection failed");
                                                     }
                                                 }
                                             );
@@ -692,20 +684,20 @@ define(['ojs/ojcore', 'knockout'
             //
             //
             //
-            //             alert(self.CourseObservableArray().length);
+            //            // alert(self.CourseObservableArray().length);
             //             var associationUrl = "http://localhost:8080/api/Course/" + self.CourseObservableArray()[self.CourseObservableArray().length - 1]['Course_Id'] + "/Professor/" + self[inputAttRef]()[0].id;
-            //             alert(associationUrl);
+            //            // alert(associationUrl);
             //             queuechain1 = queuechain1.then(
             //                 $.ajax({
             //                         type: "POST",
             //                         url: associationUrl,
             //                         success: function () {
-            //                             alert("connection success");
+            //                            // alert("connection success");
             //
             //                         },
             //                         error: function (xhr) {
             //                             console.log('error', xhr);
-            //                             alert("connection failed");
+            //                            // alert("connection failed");
             //                         }
             //                     }
             //                 ));
@@ -725,7 +717,7 @@ define(['ojs/ojcore', 'knockout'
             // }).done(
             // if (output != null) {
             // function (output) {
-            //     alert("pass");
+            //    // alert("pass");
             //     var q = jQuery.Deferred(),
             //         queuechain = q;
             //
@@ -734,13 +726,13 @@ define(['ojs/ojcore', 'knockout'
             //             url: "http://localhost:8080/Course/" + self.inputCourseId() + "/professorInCourse/",
             //             type: "DELETE",
             //             success: function (response) {
-            //                 alert("delete success");
+            //                // alert("delete success");
             //
             //             },
             //
             //             error: function (e) {
             //                 console.log(e);
-            //                 alert("delete failed");
+            //                // alert("delete failed");
             //
             //             }
             //         }));
@@ -750,13 +742,13 @@ define(['ojs/ojcore', 'knockout'
             //             url: "http://localhost:8080/Professor/" + output.id + "/courseInProfessor/" + self.inputCourseId(),
             //             type: "DELETE",
             //             success: function (response) {
-            //                 alert("delete success");
+            //                // alert("delete success");
             //                 console.log(response);
             //
             //             },
             //             error: function (e) {
             //                 console.log(e);
-            //                 alert("delete failed");
+            //                // alert("delete failed");
             //             }
             //         })
             //     );
@@ -768,17 +760,17 @@ define(['ojs/ojcore', 'knockout'
             //
             //                 var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/Professor/" + self[inputAttRef]()[0].id;
             //
-            //                 alert(associationUrl);
+            //                // alert(associationUrl);
             //                 queuechain1 = queuechain1.then($.ajax({
             //                         type: "POST",
             //                         url: associationUrl,
             //                         success: function () {
-            //                             alert("connection success");
+            //                            // alert("connection success");
             //
             //                         },
             //                         error: function (xhr) {
             //                             console.log('error', xhr);
-            //                             alert("connection failed");
+            //                            // alert("connection failed");
             //                         }
             //                     })
             //                 );
@@ -800,17 +792,17 @@ define(['ojs/ojcore', 'knockout'
             //
             //         var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/Professor/" + self[inputAttRef]()[0].id;
             //
-            //         alert(associationUrl);
+            //        // alert(associationUrl);
             //         queuechain1 = queuechain1.then($.ajax({
             //                 type: "POST",
             //                 url: associationUrl,
             //                 success: function () {
-            //                     alert("connection success");
+            //                    // alert("connection success");
             //
             //                 },
             //                 error: function (xhr) {
             //                     console.log('error', xhr);
-            //                     alert("connection failed");
+            //                    // alert("connection failed");
             //                 }
             //             })
             //         );
@@ -829,7 +821,7 @@ define(['ojs/ojcore', 'knockout'
         };
 
         self.backButtonClick=function(){
-            alert("hi, I going back to page: "+oj.Router.rootInstance.retrieve().page);
+           // alert("hi, I going back to page: "+oj.Router.rootInstance.retrieve().page);
             oj.Router.rootInstance.go("Student");
         }
 

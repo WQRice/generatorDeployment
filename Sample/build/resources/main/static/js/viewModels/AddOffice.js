@@ -6,7 +6,7 @@
 * Add Office module
 */
 
-define(['ojs/ojcore', 'knockout'
+define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 ], function (oj, ko) {
     /**
      * The view model for the main content view template
@@ -18,7 +18,7 @@ define(['ojs/ojcore', 'knockout'
 
         self.initialize = function () {
 
-            // alert(self.userName);
+            ////// alert(self.userName);
         
         self.inputOfficebuilding(null);
         
@@ -114,7 +114,7 @@ self.inputProfessorColumnArray = [
         self.selectAttColumnArray_single = ko.observable();
 
 
-        // --------- for many to one relationships
+// for  many array (one to many or many to many)
 
 
 
@@ -129,13 +129,13 @@ self.inputProfessorColumnArray = [
         self.selectAttributeinEditDialog = function(data, event) {
 
             // document.getElementById('selectAttTable').selection = [];
-            // alert("open nested popup");
-            // alert(self.selectAllDisabled());
+            ////// alert("open nested popup");
+            ////// alert(self.selectAllDisabled());
 
 
             self.curAtt(data.substring(4));
-            alert(self.curAtt());
-            alert(self.selectAllDisabled());
+           //// alert(self.curAtt());
+           //// alert(self.selectAllDisabled());
 
             // self.selectAllDisabled(self.attMap[self.curAtt()].oneOrMany === "one");
             // self.selectAllDisabled(true);
@@ -182,17 +182,17 @@ self.inputProfessorColumnArray = [
 
             callback().then(
             $.get('http://localhost:8080/'+self.curAtt(), function (data) {
-                alert(JSON.stringify(data));
+               //// alert(JSON.stringify(data));
                 //console.log(data);
 
                 // for (var i = 0; i < data.length; i++) {
                 var extractedData = data["_embedded"][self.curAtt()];
-                // alert(JSON.stringify(extractedData));
+                //// alert(JSON.stringify(extractedData));
 
 
                 for (var i = 0; i < extractedData.length; i++) {
-                    // alert(i);
-                    // alert("test");
+                    //// alert(i);
+                    //// alert("test");
 
                     var topush = JSON.parse(JSON.stringify(extractedData[i]));
                     delete topush["_links"];
@@ -206,8 +206,8 @@ self.inputProfessorColumnArray = [
                     // };
 
                     var inputAttRef = self.attMap[self.curAtt()].inputAttRef;
-                    // alert("topush"+JSON.stringify(topush));
-                    // alert(JSON.stringify(self[inputAttRef]()));
+                    //// alert("topush"+JSON.stringify(topush));
+                    //// alert(JSON.stringify(self[inputAttRef]()));
                     if (self[inputAttRef]()!=null) {
                         for (var j = 0; j < self[inputAttRef]().length; j++) {
                             if (self[inputAttRef]()[j].id == topush.id) {
@@ -217,7 +217,7 @@ self.inputProfessorColumnArray = [
                     }
 
                     self.attObservableArray.push(topush);
-                    // alert(JSON.stringify(self.attObservableArray()));
+                    //// alert(JSON.stringify(self.attObservableArray()));
                     self.attArraydataprovider = new oj.ArrayTableDataSource(self.attObservableArray, {keyAttributes: 'id'});
 
                 }
@@ -246,21 +246,13 @@ self.inputProfessorColumnArray = [
 
         };
 
-        // self.modalAddProfessorColumnArray = [
-        //
-        //     {"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
-        //
-        //     {"headerText": "firstName", "field": "firstName", "headerStyle": 'font-weight:bold'},
-        //
-        //     {"headerText": "lastName", "field": "lastName", "headerStyle": 'font-weight:bold'}
-        //
-        // ];
+
 
         self.selectionListener_single = function(event)
         {
 
-            // alert(JSON.stringify(event.detail.previousValue));
-            alert('selectionlistner');
+            //// alert(JSON.stringify(event.detail.previousValue));
+           // alert('selectionlistner');
             var data = event.detail;
 
 
@@ -270,7 +262,7 @@ self.inputProfessorColumnArray = [
                 for (var i = 0; i < totalSize; i++) {
                     self.attArraydataprovider.at(i).then(function (row) {
                         var oldObj = document.getElementById('selectAttTable_single').selection;
-                        alert(oldObj);
+                       // alert(oldObj);
 
                         for (var j=0; j<oldObj.length; j++) {
                             if(oldObj[j].startIndex.row === row.index){
@@ -291,7 +283,7 @@ self.inputProfessorColumnArray = [
                     self.attArraydataprovider.at(i).then(function (row) {
                         var foundInSelection = false;
                         if (selectionObj) {
-                            // alert(JSON.stringify(selectionObj));
+                            //// alert(JSON.stringify(selectionObj));
                             for (var j = 0; j < selectionObj.length; j++) {
                                 var range = selectionObj[j];
                                 var startIndex = range.startIndex;
@@ -318,8 +310,8 @@ self.inputProfessorColumnArray = [
         self.selectionListener_multi = function(event)
         {
 
-            // alert(JSON.stringify(event.detail.previousValue));
-            // alert('selectionlistner');
+            //// alert(JSON.stringify(event.detail.previousValue));
+            //// alert('selectionlistner');
             var data = event.detail;
 
             if (data != null) {
@@ -330,7 +322,7 @@ self.inputProfessorColumnArray = [
                     self.attArraydataprovider.at(i).then(function (row) {
                         var foundInSelection = false;
                         if (selectionObj) {
-                            // alert(JSON.stringify(selectionObj));
+                            //// alert(JSON.stringify(selectionObj));
                             for (j = 0; j < selectionObj.length; j++) {
                                 var range = selectionObj[j];
                                 var startIndex = range.startIndex;
@@ -355,7 +347,7 @@ self.inputProfessorColumnArray = [
         };
         self.selectAllListener = function(event)
         {
-            // alert("selectall");
+            //// alert("selectall");
             if (self._clearCheckboxHdr)
             {
                 return;
@@ -377,8 +369,8 @@ self.inputProfessorColumnArray = [
         };
         self.syncCheckboxes = function(event)
         {
-            // alert("sync");
-            // alert(JSON.stringify(event));
+            //// alert("sync");
+            //// alert(JSON.stringify(event));
             event.stopPropagation();
 
             if(self.selectAllDisabled()) {
@@ -403,7 +395,7 @@ self.inputProfessorColumnArray = [
 
                             if (row.index == totalSize - 1) {
                                 document.getElementById('selectAttTable_single').selection = selectionObj;
-                                // alert("selectionobj after sync"+ JSON.stringify(selectionObj));
+                                //// alert("selectionobj after sync"+ JSON.stringify(selectionObj));
                             }
                         });
                     }
@@ -431,7 +423,7 @@ self.inputProfessorColumnArray = [
 
                             if (row.index == totalSize - 1) {
                                 document.getElementById('selectAttTable_multi').selection = selectionObj;
-                                // alert("selectionobj after sync"+ JSON.stringify(selectionObj));
+                                //// alert("selectionobj after sync"+ JSON.stringify(selectionObj));
                             }
                         });
                     }
@@ -492,13 +484,13 @@ self.inputProfessorColumnArray = [
 
                     var rowIndex = selection[i].startIndex.row;
                     var selected = self.attObservableArray()[rowIndex];
-                    // alert(JSON.stringify(self.attObservableArray()));
+                    //// alert(JSON.stringify(self.attObservableArray()));
                     self[self.attMap[self.curAtt()].inputAttRef].push(selected);
 
                     // self.inputCourseProfessorArray.push(selected);
-                    // alert(JSON.stringify(self.inputCourseProfessorArray()));
+                    //// alert(JSON.stringify(self.inputCourseProfessorArray()));
 
-                    // alert(JSON.stringify(selected));
+                    //// alert(JSON.stringify(selected));
                 }
 
 
@@ -584,18 +576,18 @@ self.inputProfessorColumnArray = [
                             if (self[inputAttRef]().length > 0) {
 
                                 var associationUrl = "http://localhost:8080/api/Office/" + returndata.id + "/"+ self.oneArray[j]+ "/" + self[inputAttRef]()[0].id;
-                                alert(associationUrl);
+                               // alert(associationUrl);
                                 queuechain = queuechain.then( function () {
                                     $.ajax({
                                             type: "POST",
                                             url: associationUrl,
                                             success: function () {
-                                                alert("connection success one");
+                                               // alert("connection success one");
 
                                             },
                                             error: function (xhr) {
                                                 console.log('error', xhr);
-                                                alert("connection failed");
+                                               // alert("connection failed");
                                             }
                                         }
                                     );
@@ -612,7 +604,7 @@ self.inputProfessorColumnArray = [
 
                     for (var j in self.manyArray) {
                         var inputAttRef = self.attMap[self.manyArray[j]].inputAttRef;
-                        alert(self[inputAttRef]().length);
+                       // alert(self[inputAttRef]().length);
 
                         if (self[inputAttRef]().length > 0) {
 
@@ -623,19 +615,19 @@ self.inputProfessorColumnArray = [
                                 (function (i) {
 
                                     var associationUrl = "http://localhost:8080/api/Office/" + returndata.id + "/" + self.manyArray[j] + "/" + self[inputAttRef]()[i].id;
-                                    alert(associationUrl);
+                                   // alert(associationUrl);
                                     queuechain = queuechain.then(function () {
                                             return $.ajax({
                                                     type: "POST",
                                                     url: associationUrl
                                                     ,
                                                     success: function () {
-                                                        alert("connection success many" + associationUrl);
+                                                       // alert("connection success many" + associationUrl);
 
                                                     },
                                                     error: function (xhr) {
                                                         console.log('error', xhr);
-                                                        alert("connection failed");
+                                                       // alert("connection failed");
                                                     }
                                                 }
                                             );
@@ -676,20 +668,20 @@ self.inputProfessorColumnArray = [
             //
             //
             //
-            //             alert(self.CourseObservableArray().length);
+            //            // alert(self.CourseObservableArray().length);
             //             var associationUrl = "http://localhost:8080/api/Course/" + self.CourseObservableArray()[self.CourseObservableArray().length - 1]['Course_Id'] + "/Professor/" + self[inputAttRef]()[0].id;
-            //             alert(associationUrl);
+            //            // alert(associationUrl);
             //             queuechain1 = queuechain1.then(
             //                 $.ajax({
             //                         type: "POST",
             //                         url: associationUrl,
             //                         success: function () {
-            //                             alert("connection success");
+            //                            // alert("connection success");
             //
             //                         },
             //                         error: function (xhr) {
             //                             console.log('error', xhr);
-            //                             alert("connection failed");
+            //                            // alert("connection failed");
             //                         }
             //                     }
             //                 ));
@@ -709,7 +701,7 @@ self.inputProfessorColumnArray = [
             // }).done(
             // if (output != null) {
             // function (output) {
-            //     alert("pass");
+            //    // alert("pass");
             //     var q = jQuery.Deferred(),
             //         queuechain = q;
             //
@@ -718,13 +710,13 @@ self.inputProfessorColumnArray = [
             //             url: "http://localhost:8080/Course/" + self.inputCourseId() + "/professorInCourse/",
             //             type: "DELETE",
             //             success: function (response) {
-            //                 alert("delete success");
+            //                // alert("delete success");
             //
             //             },
             //
             //             error: function (e) {
             //                 console.log(e);
-            //                 alert("delete failed");
+            //                // alert("delete failed");
             //
             //             }
             //         }));
@@ -734,13 +726,13 @@ self.inputProfessorColumnArray = [
             //             url: "http://localhost:8080/Professor/" + output.id + "/courseInProfessor/" + self.inputCourseId(),
             //             type: "DELETE",
             //             success: function (response) {
-            //                 alert("delete success");
+            //                // alert("delete success");
             //                 console.log(response);
             //
             //             },
             //             error: function (e) {
             //                 console.log(e);
-            //                 alert("delete failed");
+            //                // alert("delete failed");
             //             }
             //         })
             //     );
@@ -752,17 +744,17 @@ self.inputProfessorColumnArray = [
             //
             //                 var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/Professor/" + self[inputAttRef]()[0].id;
             //
-            //                 alert(associationUrl);
+            //                // alert(associationUrl);
             //                 queuechain1 = queuechain1.then($.ajax({
             //                         type: "POST",
             //                         url: associationUrl,
             //                         success: function () {
-            //                             alert("connection success");
+            //                            // alert("connection success");
             //
             //                         },
             //                         error: function (xhr) {
             //                             console.log('error', xhr);
-            //                             alert("connection failed");
+            //                            // alert("connection failed");
             //                         }
             //                     })
             //                 );
@@ -784,17 +776,17 @@ self.inputProfessorColumnArray = [
             //
             //         var associationUrl = "http://localhost:8080/api/Course/" + self.inputCourseId() + "/Professor/" + self[inputAttRef]()[0].id;
             //
-            //         alert(associationUrl);
+            //        // alert(associationUrl);
             //         queuechain1 = queuechain1.then($.ajax({
             //                 type: "POST",
             //                 url: associationUrl,
             //                 success: function () {
-            //                     alert("connection success");
+            //                    // alert("connection success");
             //
             //                 },
             //                 error: function (xhr) {
             //                     console.log('error', xhr);
-            //                     alert("connection failed");
+            //                    // alert("connection failed");
             //                 }
             //             })
             //         );
@@ -813,7 +805,7 @@ self.inputProfessorColumnArray = [
         };
 
         self.backButtonClick=function(){
-            alert("hi, I going back to page: "+oj.Router.rootInstance.retrieve().page);
+           // alert("hi, I going back to page: "+oj.Router.rootInstance.retrieve().page);
             oj.Router.rootInstance.go("Office");
         }
 
