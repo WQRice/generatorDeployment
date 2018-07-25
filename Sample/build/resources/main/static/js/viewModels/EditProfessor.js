@@ -73,18 +73,11 @@ self.inputProfessorlastName(rootViewModel.frontToEditData().lastName);
 
         };
 
-self.oneArray = ["Office"];
+self.oneArray = [];
 
 self.manyArray = ["Course"];
 
 self.attMap = {
-    "Office": {
-        "oneOrMany": "one",
-        "inputAttRef": "inputProfessorOfficeArray",
-        "attInSelfName": "officeInProfessor",
-        "selfInAttName": "professorInOffice",
-        "inputColumnArray": "inputOfficeColumnArray"
-    },
     "Course": {
         "oneOrMany": "many",
         "inputAttRef": "inputProfessorCourseArray",
@@ -130,20 +123,6 @@ self.inputProfessorlastName = ko.observable();
 
 // for  one array (many to one or one to one)
 
-
-self.inputProfessorOfficeArray = ko.observableArray().extend({ deferred: true });
-self.inputOfficeDataProvider = new oj.ArrayDataProvider(self.inputProfessorOfficeArray, {keyAttributes: 'id'});
-
-self.inputOfficeColumnArray = [
-
-{"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
-
-{
-"headerText": "building",
-"field" : "building",
-"headerStyle" : 'font-weight:bold'
-}
-];
 
 
         self.attObservableArray = ko.observableArray();

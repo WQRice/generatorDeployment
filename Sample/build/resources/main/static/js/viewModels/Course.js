@@ -15,7 +15,7 @@ function(oj, ko, $)
       //
 
       self.oneArray = ["Professor"];
-      self.manyArray = ["Student"];
+      self.manyArray = [];
 
       self.attMap = {
     "Professor": {
@@ -24,13 +24,6 @@ function(oj, ko, $)
         "attInSelfName": "professorInCourse",
         "selfInAttName": "courseInProfessor",
         "inputColumnArray": "inputProfessorColumnArray"
-    },
-    "Student": {
-        "oneOrMany": "many",
-        "inputAttRef": "inputCourseStudentArray",
-        "attInSelfName": "studentInCourse",
-        "selfInAttName": "courseInStudent",
-        "inputColumnArray": "inputStudentColumnArray"
     }
 };
 

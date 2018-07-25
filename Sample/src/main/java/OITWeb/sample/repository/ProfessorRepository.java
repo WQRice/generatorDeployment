@@ -12,6 +12,4 @@ import java.util.List;
 public interface ProfessorRepository extends JpaRepository<Professor,Long>{
 	List<Professor> findByCourseInProfessor(Course course);
 
-	List<Professor> findByOfficeInProfessor(Office office);
-
 }

@@ -73,7 +73,7 @@ self.inputCourseclassroom(rootViewModel.frontToEditData().classroom);
 
 self.oneArray = ["Professor"];
 
-self.manyArray = ["Student"];
+self.manyArray = [];
 
 self.attMap = {
     "Professor": {
@@ -82,13 +82,6 @@ self.attMap = {
         "attInSelfName": "professorInCourse",
         "selfInAttName": "courseInProfessor",
         "inputColumnArray": "inputProfessorColumnArray"
-    },
-    "Student": {
-        "oneOrMany": "many",
-        "inputAttRef": "inputCourseStudentArray",
-        "attInSelfName": "studentInCourse",
-        "selfInAttName": "courseInStudent",
-        "inputColumnArray": "inputStudentColumnArray"
     }
 };
 
@@ -171,32 +164,6 @@ self.inputProfessorColumnArray = [
 // for  many array (one to many or many to many)
 
 
-
-self.inputCourseStudentArray = ko.observableArray().extend({ deferred: true });
-self.inputStudentDataProvider = new oj.ArrayDataProvider(self.inputCourseStudentArray, {keyAttributes: 'id'});
-
-self.inputStudentColumnArray = [
-
-{"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
-
-{
-"headerText": "studentId",
-"field" : "studentId",
-"headerStyle" : 'font-weight:bold'
-}
-,
-{
-"headerText": "firstName",
-"field" : "firstName",
-"headerStyle" : 'font-weight:bold'
-}
-,
-{
-"headerText": "lastName",
-"field" : "lastName",
-"headerStyle" : 'font-weight:bold'
-}
-];
 
 
         self.selectAttColumnArray_multi = ko.observable();

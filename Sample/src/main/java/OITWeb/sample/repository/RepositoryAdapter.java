@@ -8,9 +8,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapt
 public class RepositoryAdapter extends RepositoryRestConfigurerAdapter{
 @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-        config.exposeIdsFor(Student.class);
-        config.exposeIdsFor(Course.class);
         config.exposeIdsFor(Professor.class);
-        config.exposeIdsFor(Office.class);
+        config.exposeIdsFor(Course.class);
     }
 }

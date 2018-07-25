@@ -14,17 +14,10 @@ function(oj, ko, $)
       var self = this;
       //
 
-      self.oneArray = ["Office"];
+      self.oneArray = [];
       self.manyArray = ["Course"];
 
       self.attMap = {
-    "Office": {
-        "oneOrMany": "one",
-        "inputAttRef": "inputProfessorOfficeArray",
-        "attInSelfName": "officeInProfessor",
-        "selfInAttName": "professorInOffice",
-        "inputColumnArray": "inputOfficeColumnArray"
-    },
     "Course": {
         "oneOrMany": "many",
         "inputAttRef": "inputProfessorCourseArray",
@@ -79,40 +72,6 @@ function(oj, ko, $)
                              }
 
                              
-                                $.ajax({
-                                    type: "GET",
-                                    url: extractedData[i]._links.officeInProfessor.href
-                                }).done(function (data0) {
-                                        topush['Professor_office'] = data0.id;
-                                        // alert(JSON.stringify(data0));
-                                        defs[0].resolve(true);
-
-                                    }
-                                // counter++;
-                                // if (counter == extractedData.length) {
-                                //     self.CourseObservableArray.sort(function (left, right) {
-                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
-                                //     });
-                                //     alert(JSON.stringify(self.CourseObservableArray()));
-                                // }
-
-                                // data = data0;
-                            ).fail(function (data0) {
-                                defs[0].resolve(false);
-                                // alert("failed");
-                                // self.CourseObservableArray.push({
-                                //     'Course_Id': extractedData[i].id,
-                                //     'Course_classroom': extractedData[i].classroom
-                                // });
-                                // counter++;
-                                // if (counter == extractedData.length) {
-                                //     self.CourseObservableArray.sort(function (left, right) {
-                                //         return left.Course_Id == right.Course_Id ? 0 : (left.Course_Id < right.Course_Id ? -1 : 1)
-                                //     });
-                                //     alert(JSON.stringify(self.CourseObservableArray()));
-                                // }
-                            });
-                          
 
                             $.when.apply($, defs).then(function() {
                                 self.ProfessorObservableArray.push(topush);
@@ -189,8 +148,6 @@ function(oj, ko, $)
                  
 
                   
-                    {"headerText": "Office", "field": "Professor_office", "headerStyle": 'font-weight:bold'},
-                 
 
           { "renderer": oj.KnockoutTemplateUtils.getRenderer("button_tmpl", true), "style":"text-align: right"}
 

@@ -23,14 +23,14 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojmodule-element-utils', 'ojs/ojmodule-el
       self.router.configure({
 
       
-      'Student': {label: 'Student Table'
+      'Professor': {label: 'Professor Table'
             , isDefault: true
          }, 
 
-    'AddStudent': {label: 'Add Student'
+    'AddProfessor': {label: 'Add Professor'
     },
 
-    'EditStudent': {label: 'Edit Student'
+    'EditProfessor': {label: 'Edit Professor'
     } 
           ,
       
@@ -43,28 +43,6 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojmodule-element-utils', 'ojs/ojmodule-el
 
     'EditCourse': {label: 'Edit Course'
     } 
-          ,
-      
-    
-      'Professor': {label: 'Professor Table'
-          }, 
-
-    'AddProfessor': {label: 'Add Professor'
-    },
-
-    'EditProfessor': {label: 'Edit Professor'
-    } 
-          ,
-      
-    
-      'Office': {label: 'Office Table'
-          }, 
-
-    'AddOffice': {label: 'Add Office'
-    },
-
-    'EditOffice': {label: 'Edit Office'
-    } 
     
     
       });
@@ -73,10 +51,8 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojmodule-element-utils', 'ojs/ojmodule-el
       self.navData = [
 
       
-              {  name: 'Student', id: 'Student'},
-                  {  name: 'Course', id: 'Course'},
-                  {  name: 'Professor', id: 'Professor'},
-                  {  name: 'Office', id: 'Office'}      
+              {  name: 'Professor', id: 'Professor'},
+                  {  name: 'Course', id: 'Course'}      
       
 
       ];
