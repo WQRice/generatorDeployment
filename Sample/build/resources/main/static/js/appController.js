@@ -23,25 +23,14 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojmodule-element-utils', 'ojs/ojmodule-el
       self.router.configure({
 
       
-      'Professor': {label: 'Professor Table'
+      'Car': {label: 'Car Table'
             , isDefault: true
          }, 
 
-    'AddProfessor': {label: 'Add Professor'
+    'AddCar': {label: 'Add Car'
     },
 
-    'EditProfessor': {label: 'Edit Professor'
-    } 
-          ,
-      
-    
-      'Course': {label: 'Course Table'
-          }, 
-
-    'AddCourse': {label: 'Add Course'
-    },
-
-    'EditCourse': {label: 'Edit Course'
+    'EditCar': {label: 'Edit Car'
     } 
     
     
@@ -51,8 +40,7 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojmodule-element-utils', 'ojs/ojmodule-el
       self.navData = [
 
       
-              {  name: 'Professor', id: 'Professor'},
-                  {  name: 'Course', id: 'Course'}      
+              {  name: 'Car', id: 'Car'}      
       
 
       ];
@@ -140,7 +128,7 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojmodule-element-utils', 'ojs/ojmodule-el
 
             // Header
             // Application Name used in Branding Area
-            self.appName = ko.observable("sample");
+            self.appName = ko.observable("OwlsWeb");
             // User Info used in Global Navigation area
             self.userLogin = ko.observable("OIT@rice.edu");
 

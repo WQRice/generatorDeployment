@@ -2,9 +2,7 @@
 To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
--->
-
-
+--
 <!--
 To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
@@ -15,8 +13,13 @@ and open the template in the editor.
 
 <%var requirePara={'jpa:mi':true, 'jpa:ma': true, 'jpa:dmi': true, 'jpa:dma': true};
 var validationMap={'jpa:mi':'min','jpa:ma':'max','jpa:dmi':'min','jpa:dma':'max'};
-var inputTypeMap={'java.sql.Date':'date', 'String':'text', 'int': 'number', 'Integer':'number', 'long':'number', 'Long':'number','double':'number'};
+var inputTypeMap={'java.sql.Date':'date',  'java.time.LocalDateTime':'date-time',
+'String':'text', 'char':'text', 'Character':'text', 
+'byte': 'number', 'short': 'number', 'Byte': 'number', 'Short': 'number',
+'int': 'number', 'Integer':'number', 'long':'number', 'Long':'number','double':'number', 'Double':'number',
+'java.math.BigInteger': 'number', 'java.math.BigDecimal': 'number'
 
+};
 var labelMap = {};
 for (var j in BASIC) {
     if (BASIC[j]['$']['uil']!=undefined) {
@@ -25,8 +28,8 @@ for (var j in BASIC) {
 }
 
 
-var oneArray = mappedBy[CLASSNAME].oneByOne.concat(mappedBy[CLASSNAME].manyByOne);
-var manyArray = mappedBy[CLASSNAME].oneByMany.concat(mappedBy[CLASSNAME].manyByMany);
+var oneArray = forwardMap[CLASSNAME].oneToOne.concat(forwardMap[CLASSNAME].manyToOne);
+var manyArray = forwardMap[CLASSNAME].oneToMany.concat(forwardMap[CLASSNAME].manyToMany);
 %>
 
 

@@ -1,6 +1,6 @@
 <%var requirePara={'jpa:mi':true,'jpa:ma':true,'jpa:dmi':true,'jpa:dma':true};
 var map={'jpa:nb':'@NotBlank','jpa:nn':'@NotNull','jpa:mi':'@Min','jpa:ma':'@Max','jpa:dmi':'@DecimalMin','jpa:dma':'@DecimalMax'};
-var type={'java.sql.Date':'Date'}
+var type={'java.sql.Date':'Date', }
 -%>
 package OITWeb.<%-PACKAGENAME%>.model;
 
@@ -38,15 +38,18 @@ public class <%-CLASSNAME%> implements Serializable{
 <%for(var j in BASIC){
 		if(BASIC[j]['jpa:bv']!=undefined){
 			for(var k in BASIC[j]['jpa:bv'][0]){-%>
-	<%-k in requirePara ?map[k]+'('+BASIC[j]['jpa:bv'][0][k][0]['$']['v']+')':map[k]%>
-<%			}-%>
-<%		}-%>
+<%if(k == 'jpa:dmi' || k == 'jpa:dma'){-%>
+    <%-map[k]+'("'+BASIC[j]['jpa:bv'][0][k][0]['$']['v']+'")'-%>
+<%}else{-%>
+    <%-k in requirePara ?map[k]+'('+BASIC[j]['jpa:bv'][0][k][0]['$']['v']+')':map[k]%>
+<%}-%>
+<%}-%>
+<%}-%>
 -%>
 <%		if(BASIC[j]['$']['attribute-type']=='java.sql.Date'){-%>
-	@Column(nullable = false)
 	@JsonFormat(pattern = "yyyy-mm-dd")
 <%		}-%>
-	private <%-type[BASIC[j]['$']['attribute-type']]==undefined ?BASIC[j]['$']['attribute-type']:type[BASIC[j]['$']['attribute-type']]%> <%-BASIC[j]['$']['name']-%>;
+	private <%-type[BASIC[j]['$']['attribute-type']]==undefined ?BASIC[j]['$']['attribute-type']:type[BASIC[j]['$']['attribute-type']]%> <%-caseConvert.downFirst(BASIC[j]['$']['name'])-%>;
 
 <%	}-%>
 <%if(ONETOMANY!=undefined){

@@ -21,8 +21,8 @@ module.exports = function (yeoEntity) {
     {
         if(key=='exit\n'){
             //using gradle -stop to stop daemon
-            exec('./gradlew -stop',function (error, stdout, stderr) {
-                console.log(stdout);
+            exec('cd Sample && ./gradlew -stop',function (error, stdout, stderr) {
+                console.log(stdout,stderr);
                 process.exit();
             });
         }else{

@@ -5,7 +5,8 @@ var fs= require('fs-extra');
 var Generator = require('yeoman-generator');
 var fuzzy = require('fuzzy');
 
-var jpaList;
+var jpaList=[];
+var XMLPath;
 var buildLater='No';
 
 function searchJpas(answers, input) {
@@ -30,27 +31,47 @@ module.exports = class extends Generator {
         // Next, add your custom code
         this.option('babel'); // This method adds support for a `--babel` flag
 
-        //remove previous Sample folder
-        fs.removeSync('XML/.DS_Store');
-        jpaList=fs.readdirSync('XML');
         this.env.adapter.promptModule.registerPrompt('autoComplete', require('inquirer-autocomplete-prompt'));
 //     this.log(jpaList);
     }
 
+    initializing() {
+        return this.prompt([{
+            type    : 'input',
+            name    : 'XMLPath',
+            message : 'What is the path of your XML files directory:',
+            default : './', // Default to current folder
+            store   : true
+        }]).then((answers) => {
+            XMLPath=answers.XMLPath.trim();
+            var tempList=fs.readdirSync(XMLPath);
+            for(var i in tempList){
+                if(tempList[i].split('.').slice(-1)[0]=='jpa'){
+                    jpaList.push(tempList[i]);
+                }
+            }
+    });
+    }
 
     prompting() {
         return this.prompt([{
-            type    : 'autoComplete',
-            name    : 'jpaFile',
-            message : 'Choose your jpaFile:',
-            source  :  searchJpas
+            type    : 'input',
+            name    : 'applicationName',
+            message : 'Your application name:',
+            default : 'OwlsWeb', // Default to current folder name
+            store   : true
         }, {
             type    : 'input',
             name    : 'packageName',
             message : 'Your package name:',
             default : 'sample', // Default to current folder name
             store   : true
-        }, {
+        },{
+            type    : 'autoComplete',
+            name    : 'jpaFile',
+            message : 'Choose your jpaFile:',
+            source  :  searchJpas
+        },{
             type    : 'list',
             name    : 'executeLater',
             message : 'Would you like to run the application after finishing generation?',
@@ -58,11 +79,11 @@ module.exports = class extends Generator {
             store   : true
         }]).then((answers) => {
             fs.removeSync('Sample');
-        fs.copySync('webStatic', 'Sample');
-        var datas = parser(answers.jpaFile,answers.packageName);
-        p2j(datas);
-        p2f(datas);
-        buildLater=answers.executeLater;
+            fs.copySync('webStatic', 'Sample');
+            var datas = parser(XMLPath+'/'+answers.jpaFile,answers.packageName,answers.applicationName);
+            p2j(datas);
+            p2f(datas);
+            buildLater=answers.executeLater;
     });
     }
 

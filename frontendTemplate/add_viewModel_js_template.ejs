@@ -13,8 +13,8 @@ for (var j in myself.BASIC) {
     } else {labelMap[myself.BASIC[j]['$']['name']] = myself.CLASSNAME +" "+ myself.BASIC[j]['$']['name']; }
 }
 
-var oneArray = myself.mappedBy[myself.CLASSNAME].oneByOne.concat(myself.mappedBy[myself.CLASSNAME].manyByOne);
-var manyArray = myself.mappedBy[myself.CLASSNAME].oneByMany.concat(myself.mappedBy[myself.CLASSNAME].manyByMany);
+var oneArray = myself.forwardMap[myself.CLASSNAME].oneToOne.concat(myself.forwardMap[myself.CLASSNAME].manyToOne);
+var manyArray = myself.forwardMap[myself.CLASSNAME].oneToMany.concat(myself.forwardMap[myself.CLASSNAME].manyToMany);
 
 var attMap = {};
 for (var i in oneArray) {
@@ -579,8 +579,10 @@ self.input<%=oneArray[jj]%>ColumnArray = [
             var invalidflag=false;
             for (var i=0; i<elementArray.length; i++) {
                 if (!(elementArray[i].valid === "valid")) {
+                 if(elementArray[i].showMessages !== undefined){
                     elementArray[i].showMessages();
                     if (invalidflag==false) invalidflag = true;
+                    }
                 }
             }
 

@@ -7,10 +7,10 @@ var datas;
 var entityMap = {};
 
 
-module.exports = function (jpaFile, packageName) {
+module.exports = function (jpaFile, packageName, appName) {
     datas = [];
     var parseString = require('xml2js').parseString;
-    var xml = fs.readFileSync('XML/' + jpaFile, 'utf-8');
+    var xml = fs.readFileSync(jpaFile, 'utf-8');
     var jpaRoot = 'jpa:entity-mappings';
 
     parseString(xml, function (err, result) {
@@ -37,6 +37,7 @@ module.exports = function (jpaFile, packageName) {
 
             datas.push({
                 'PACKAGENAME': packageName,
+                'APPNAME': appName,
                 'CLASSNAME': className[0].toUpperCase() + className.slice(1),
                 'JPAID': jpaid,
                 'BASIC': basic,
@@ -52,33 +53,47 @@ module.exports = function (jpaFile, packageName) {
     });
 
     var mappedBy={};
+    var forwardMap={};
     for (var i in datas) {
         mappedBy[datas[i].CLASSNAME]={};
         mappedBy[datas[i].CLASSNAME]['oneByOne']=[];
         mappedBy[datas[i].CLASSNAME]['oneByMany']=[];
         mappedBy[datas[i].CLASSNAME]['manyByOne']=[];
         mappedBy[datas[i].CLASSNAME]['manyByMany']=[];
+
+        forwardMap[datas[i].CLASSNAME]={};
+        forwardMap[datas[i].CLASSNAME]['oneToOne']=[];
+        forwardMap[datas[i].CLASSNAME]['oneToMany']=[];
+        forwardMap[datas[i].CLASSNAME]['manyToOne']=[];
+        forwardMap[datas[i].CLASSNAME]['manyToMany']=[];
     }
 
     for(var i in datas){
         if(datas[i]['ONETOONE']!=undefined){
             for(var k in datas[i]['ONETOONE']){
                 mappedBy[entityMap[datas[i]['ONETOONE'][k]['$']['connected-entity-id']]]['oneByOne'].push(datas[i].CLASSNAME);
+            forwardMap[datas[i].CLASSNAME]['oneToOne'].push(entityMap[datas[i]['ONETOONE'][k]['$']['connected-entity-id']]);
             }
         }
         if(datas[i]['ONETOMANY']!=undefined){
             for(var k in datas[i]['ONETOMANY']){
                 mappedBy[entityMap[datas[i]['ONETOMANY'][k]['$']['connected-entity-id']]]['manyByOne'].push(datas[i].CLASSNAME);
+             forwardMap[datas[i].CLASSNAME]['oneToMany'].push(entityMap[datas[i]['ONETOMANY'][k]['$']['connected-entity-id']]);
+
             }
         }
         if(datas[i]['MANYTOONE']!=undefined){
             for(var k in datas[i]['MANYTOONE']){
                 mappedBy[entityMap[datas[i]['MANYTOONE'][k]['$']['connected-entity-id']]]['oneByMany'].push(datas[i].CLASSNAME);
+            forwardMap[datas[i].CLASSNAME]['manyToOne'].push(entityMap[datas[i]['MANYTOONE'][k]['$']['connected-entity-id']]);
+
             }
         }
         if(datas[i]['MANYTOMANY']!=undefined){
             for(var k in datas[i]['MANYTOMANY']){
                 mappedBy[entityMap[datas[i]['MANYTOMANY'][k]['$']['connected-entity-id']]]['manyByMany'].push(datas[i].CLASSNAME);
+                forwardMap[datas[i].CLASSNAME]['manyToMany'].push(entityMap[datas[i]['MANYTOMANY'][k]['$']['connected-entity-id']]);
+
             }
         }
     }
@@ -86,6 +101,7 @@ module.exports = function (jpaFile, packageName) {
     for(var i in datas){
         datas[i]['IdToEntity'] = entityMap;
         datas[i]['mappedBy']=mappedBy;
+        datas[i]['forwardMap']=forwardMap;
     }
 
     // console.log(util.inspect(mappedBy, false, null));

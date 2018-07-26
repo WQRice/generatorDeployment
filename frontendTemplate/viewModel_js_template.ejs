@@ -14,8 +14,8 @@ for (var j in BASIC) {
 } else {labelMap[BASIC[j]['$']['name']] = CLASSNAME +" "+BASIC[j]['$']['name']; }
 }
 
-var oneArray = mappedBy[CLASSNAME].oneByOne.concat(mappedBy[CLASSNAME].manyByOne);
-var manyArray = mappedBy[CLASSNAME].oneByMany.concat(mappedBy[CLASSNAME].manyByMany);
+var oneArray = forwardMap[CLASSNAME].oneToOne.concat(forwardMap[CLASSNAME].manyToOne);
+var manyArray = forwardMap[CLASSNAME].oneToMany.concat(forwardMap[CLASSNAME].manyToMany);
 
 var attMap = {};
 for (var i in oneArray) {
