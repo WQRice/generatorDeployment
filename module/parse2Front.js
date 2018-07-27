@@ -9,7 +9,7 @@ module.exports=function(datas){
 
     var datasobj = {'dataArray':datas};
 
-    console.log(util.inspect(datas, false, null));
+    // console.log(util.inspect(datas, false, null));
 
      var template = fs.readFileSync('frontendTemplate/index_html_template.ejs', 'utf-8');
      var file = ejs.render ( template , datasobj );

@@ -2,10 +2,10 @@
 var fs = require('fs-extra');
 var caseConvert=require("./CaseConvert");
 var datas;
-// var util = require('util');
+var util = require('util');
 
 var entityMap = {};
-
+var repNameMap = {};
 
 module.exports = function (jpaFile, packageName, appName) {
     datas = [];
@@ -15,7 +15,7 @@ module.exports = function (jpaFile, packageName, appName) {
 
     parseString(xml, function (err, result) {
 
-        // console.log(util.inspect(result, false, null));
+        console.log(util.inspect(result, false, null));
 
         //get needed data from XML
         for (var i in result[jpaRoot]['jpa:entity']) {
@@ -27,11 +27,14 @@ module.exports = function (jpaFile, packageName, appName) {
             var manyToOne = result[jpaRoot]['jpa:entity'][i]['jpa:attributes'][0]['jpa:many-to-one'];
             var manyToMany = result[jpaRoot]['jpa:entity'][i]['jpa:attributes'][0]['jpa:many-to-many'];
             var entityId = result[jpaRoot]['jpa:entity'][i]['$']['id'];
+            var annotations = result[jpaRoot]['jpa:entity'][i]['jpa:annotation'];
+            var annoList = [];
+
 
             entityMap[entityId] = className;
 
             for (var j in basic) {
-                console.log(basic[j]['$']['name'] + ' is of type ' + basic[j]['$']['attribute-type']);
+                // console.log(basic[j]['$']['name'] + ' is of type ' + basic[j]['$']['attribute-type']);
             }
             console.log();
 
@@ -46,8 +49,21 @@ module.exports = function (jpaFile, packageName, appName) {
                 'MANYTOONE': manyToOne,
                 'MANYTOMANY': manyToMany,
                 'ENTITYID': entityId,
-                'caseConvert':caseConvert
+                'caseConvert':caseConvert,
             });
+
+             for(var j in annotations) {
+                    annoList.push(annotations[j]['$']['n']);
+                    if(annotations[j]['$']['n'].substr(0,8) == "@repName"){
+                        // console.log(annotations[j]['$']['n'].substr(0,8) );
+                        var compoList = annotations[j]['$']['n'].substring(9,annotations[j]['$']['n'].length-1);
+                        repNameMap[className[0].toUpperCase() + className.slice(1)] = compoList.split(/,\s*/);
+                        // console.log(compoList.split(/,\s*/));
+
+                    }
+            }
+           
+
         }
 
     });
@@ -102,6 +118,7 @@ module.exports = function (jpaFile, packageName, appName) {
         datas[i]['IdToEntity'] = entityMap;
         datas[i]['mappedBy']=mappedBy;
         datas[i]['forwardMap']=forwardMap;
+        datas[i]['REPNAMEMAP'] = repNameMap;
     }
 
     // console.log(util.inspect(mappedBy, false, null));

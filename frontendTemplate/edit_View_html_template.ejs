@@ -16,7 +16,7 @@ var validationMap={'jpa:mi':'min','jpa:ma':'max','jpa:dmi':'min','jpa:dma':'max'
 var inputTypeMap={'java.sql.Date':'date',  'java.time.LocalDateTime':'date-time',
 'String':'text', 'char':'text', 'Character':'text', 
 'byte': 'number', 'short': 'number', 'Byte': 'number', 'Short': 'number',
-'int': 'number', 'Integer':'number', 'long':'number', 'Long':'number','double':'number', 'Double':'number',
+    'int': 'number', 'Integer':'number', 'long':'number', 'Long':'number','double':'number', 'Double':'number', 'Float':'number', 'float':'number',
 'java.math.BigInteger': 'number', 'java.math.BigDecimal': 'number'
 
 };
@@ -161,6 +161,7 @@ var manyArray = forwardMap[CLASSNAME].oneToMany.concat(forwardMap[CLASSNAME].man
                                                       display='grid'
                                                       columns-default='{"sortable": "enabled"}'
                                                       columns='{{input<%=oneArray[i]%>ColumnArray}}'
+                                                      style='width: 100%; height:100%;'
                                             >
 
                                             </oj-table>

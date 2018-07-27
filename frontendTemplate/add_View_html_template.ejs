@@ -17,7 +17,7 @@ var validationMap={'jpa:mi':'min','jpa:ma':'max','jpa:dmi':'min','jpa:dma':'max'
 var inputTypeMap={'java.sql.Date':'date', 'java.time.LocalDateTime':'date-time',
 'String':'text', 'char':'text', 'Character':'text', 
 'byte': 'number', 'short': 'number', 'Byte': 'number', 'Short': 'number',
-'int': 'number', 'Integer':'number', 'long':'number', 'Long':'number','double':'number', 'double':'number',
+'int': 'number', 'Integer':'number', 'long':'number', 'Long':'number','double':'number', 'Double':'number', 'Float':'number', 'float':'number',
 'java.math.BigInteger': 'number', 'java.math.BigDecimal': 'number'
 
 };
@@ -126,6 +126,7 @@ var manyArray = forwardMap[CLASSNAME].oneToMany.concat(forwardMap[CLASSNAME].man
 
                     <div class="oj-flex oj-flex-items-pad">
 
+
                         <div class="oj-flex-item deprecated-col-default-width">
                             <oj-label for="modal<%=oneArray[i]%>Table" style = "font-size: 16px">Select <%=oneArray[i]%> </oj-label>
                         </div>
@@ -134,6 +135,15 @@ var manyArray = forwardMap[CLASSNAME].oneToMany.concat(forwardMap[CLASSNAME].man
 
                             <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-5">
                                 <div class="oj-flex oj-flex-items-pad">
+
+                                    <%if(REPNAMEMAP[oneArray[i]]!= undefined) {-%>
+
+                                      <oj-combobox-one id="modal<%=oneArray[i]%>Table"  style="max-width:20em"
+                                                       options="{{drop_<%-oneArray[i]%>Arraydataprovider}}"
+                                                       value="{{drop_input<%=oneArray[i]%>DataProvider}}">
+                                      </oj-combobox-one>
+
+                                    <%}else{-%>
                                     <oj-button id="edit<%=oneArray[i]%>" class="oj-button-sm"
                                                style = "margin-right: 2px"
                                                data-bind="click: function() {selectAttributeinEditDialog($element.id); }">
@@ -158,11 +168,12 @@ var manyArray = forwardMap[CLASSNAME].oneToMany.concat(forwardMap[CLASSNAME].man
                                         <!--on-current-row-changed="[[currentRowListener]]"-->
 
                                     </oj-table>
+                                    <%}-%>
+
                                 </div>
 
                             </div>
                         </div>
-
 
 
                     </div>

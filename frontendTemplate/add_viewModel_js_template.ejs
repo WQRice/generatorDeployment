@@ -23,7 +23,8 @@ for (var i in oneArray) {
         inputAttRef: "input"+myself.CLASSNAME+oneArray[i]+"Array",
         attInSelfName: downFirst(oneArray[i])+"In"+myself.CLASSNAME,
         selfInAttName: downFirst(myself.CLASSNAME)+"In" + oneArray[i],
-        inputColumnArray : "input" + oneArray[i] +"ColumnArray"
+        inputColumnArray : "input" + oneArray[i] +"ColumnArray",
+        dropInputAttData: "drop_input"+ oneArray[i] + "DataProvider"
 
     }
 }
@@ -46,7 +47,6 @@ for(var i in dataArray) {
 
 }
 
-console.log(entityMap);
 
 %>
 
@@ -74,7 +74,11 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 
             for (var property in self.attMap){
                 if(self.attMap.hasOwnProperty(property)){
+                    if(!self.dropdownMap.hasOwnProperty(property)){
                     self[self.attMap[property].inputAttRef].removeAll();
+                } else {
+                    self[self.attMap[property].dropInputAttData](null);
+                    }
                 }
 
             }
@@ -88,6 +92,7 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
         self.manyArray = <%- JSON.stringify(manyArray)%>;
         self.attMap = <%- JSON.stringify(attMap, null, 4) %>;
 
+        self.dropdownMap = <%- JSON.stringify(myself.REPNAMEMAP) %>;
         self.curAtt = ko.observable("");
 
         // self.selectAllDisabled = ko.observable();
@@ -123,6 +128,9 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 // for  one array (many to one or one to one)
 
      <% for (var jj in oneArray) {%>
+
+<%if(myself.REPNAMEMAP[oneArray[jj]]== undefined) {%>
+
     self.input<%=myself.CLASSNAME+oneArray[jj]%>Array = ko.observableArray().extend({ deferred: true });
     self.input<%=oneArray[jj]%>DataProvider = new oj.ArrayDataProvider(self.input<%=myself.CLASSNAME+oneArray[jj]%>Array, {keyAttributes: 'id'});
 
@@ -141,7 +149,51 @@ self.input<%=oneArray[jj]%>ColumnArray = [
 <%}-%>
 <%}-%>
 ];
+
+<%} else {%>
+self.drop_<%=myself.CLASSNAME+oneArray[jj]%>Array = ko.observableArray().extend({ deferred: true });
+
+
+self.drop_<%-oneArray[jj]%>Arraydataprovider = new oj.ArrayDataProvider(self.drop_<%=myself.CLASSNAME+oneArray[jj]%>Array, {keyAttributes: 'value'});
+
+//self.drop_<%=myself.CLASSNAME+oneArray[jj]%>Array.push({
+//        value: "blank",
+//        label: ""
+//    });
+$.get('http://localhost:8080/<%-oneArray[jj]%>', function (data) {
+//// alert(JSON.stringify(data));
+//console.log(data);
+
+// for (var i = 0; i < data.length; i++) {
+var extractedData = data["_embedded"].<%-oneArray[jj]%>;
+//// alert(JSON.stringify(extractedData));
+
+
+for (var i = 0; i < extractedData.length; i++) {
+//// alert(i);
+//// alert("test");
+
+var repname = "";
+<%for(var jjj in myself.REPNAMEMAP[oneArray[jj]]){-%>
+repname = repname + "<%=jjj==0?"" : " "%>" + extractedData[i].<%-myself.REPNAMEMAP[oneArray[jj]][jjj]%>;
+<%}-%>
+
+var topush = {
+value: extractedData[i].id,
+label: repname
+
+};
+self.drop_<%=myself.CLASSNAME+oneArray[jj]%>Array.push(topush);
+
+}
+
+
+});
+self.drop_input<%=oneArray[jj]%>DataProvider = ko.observable();
+
 <%}%>
+<%}%>
+
 
 
 
@@ -634,11 +686,26 @@ self.input<%=oneArray[jj]%>ColumnArray = [
                         queuechain = q;
 
                     for (var j in self.oneArray) {
-                            var inputAttRef = self.attMap[self.oneArray[j]].inputAttRef;
+                        var inputAttRef;
+                        var array = [];
+                        var attId;
 
-                            if (self[inputAttRef]().length > 0) {
+                        if(self.dropdownMap.hasOwnProperty(self.oneArray[j])){
+                            inputAttRef = self.attMap[self.oneArray[j]].dropInputAttData;
+                            if (self[inputAttRef]()!=null){
+                              array.push({
+                              id : self[inputAttRef]()
+                              });
+                            attId = "value";
+                              }
+                            } else {
+                              inputAttRef = self.attMap[self.oneArray[j]].inputAttRef;
+                              array = self[inputAttRef]();
+                            }
 
-                                var associationUrl = "http://localhost:8080/api/<%=myself.CLASSNAME%>/" + returndata.id + "/"+ self.oneArray[j]+ "/" + self[inputAttRef]()[0].id;
+                            if (array.length > 0) {
+
+                                var associationUrl = "http://localhost:8080/api/<%=myself.CLASSNAME%>/" + returndata.id + "/"+ self.oneArray[j]+ "/" + array[0].id;
                                // alert(associationUrl);
                                 queuechain = queuechain.then( function () {
                                     $.ajax({

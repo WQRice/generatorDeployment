@@ -110,11 +110,22 @@ function(oj, ko, $)
                                     type: "GET",
                                     url: extractedData[i]._links.<%-attMap[oneArray[j]].attInSelfName%>.href
                                 }).done(function (data0) {
-                                        topush['<%-CLASSNAME%>_<%-downFirst(oneArray[i])%>'] = data0.id;
+
+                                    <%if(REPNAMEMAP[oneArray[j]]!= undefined) {-%>
+                                      var repname = "";
+                                      <%for(var jj in REPNAMEMAP[oneArray[j]]){-%>
+                                          repname = repname + "<%=jj==0?"" : " "%>" + data0.<%-REPNAMEMAP[oneArray[j]][jj]%>;
+                                      <%}-%>
+                                      topush['<%-CLASSNAME%>_<%-downFirst(oneArray[j])%>'] = repname;
+                                    <%} else {-%>
+                                     topush['<%-CLASSNAME%>_<%-downFirst(oneArray[j])%>'] = data0.id;
+                                     <% }-%>
+
                                         // alert(JSON.stringify(data0));
                                         defs[<%-j%>].resolve(true);
 
-                                    }
+                                    
+                                  }
                                 // counter++;
                                 // if (counter == extractedData.length) {
                                 //     self.CourseObservableArray.sort(function (left, right) {
