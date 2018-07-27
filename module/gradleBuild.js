@@ -1,9 +1,9 @@
 'use strict';
 const { exec } = require('child_process');
 
-module.exports = function (yeoEntity) {
+module.exports = function (yeoEntity,outputPath) {
     //execute cmd
-    var cmd=exec('cd Sample && ./gradlew build && ./gradlew bootRun');
+    var cmd=exec('cd '+outputPath+' && ./gradlew build && ./gradlew bootRun');
     var chalk = require('chalk');
 
     //show build and run information from gradle in real time
@@ -21,7 +21,7 @@ module.exports = function (yeoEntity) {
     {
         if(key=='exit\n'){
             //using gradle -stop to stop daemon
-            exec('cd Sample && ./gradlew -stop',function (error, stdout, stderr) {
+            exec('cd '+outputPath+' && ./gradlew -stop',function (error, stdout, stderr) {
                 console.log(stdout,stderr);
                 process.exit();
             });

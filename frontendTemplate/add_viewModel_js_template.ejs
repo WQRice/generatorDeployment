@@ -78,6 +78,8 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
                     self[self.attMap[property].inputAttRef].removeAll();
                 } else {
                     self[self.attMap[property].dropInputAttData](null);
+                    self["drop_ItemOrder"+property+"Array"].removeAll();
+                    self["get"+property]();
                     }
                 }
 
@@ -160,7 +162,8 @@ self.drop_<%-oneArray[jj]%>Arraydataprovider = new oj.ArrayDataProvider(self.dro
 //        value: "blank",
 //        label: ""
 //    });
-$.get('http://localhost:8080/<%-oneArray[jj]%>', function (data) {
+self.get<%-oneArray[jj]%> = function(){
+    $.get('http://localhost:8080/<%-oneArray[jj]%>', function (data) {
 //// alert(JSON.stringify(data));
 //console.log(data);
 
@@ -189,6 +192,7 @@ self.drop_<%=myself.CLASSNAME+oneArray[jj]%>Array.push(topush);
 
 
 });
+}
 self.drop_input<%=oneArray[jj]%>DataProvider = ko.observable();
 
 <%}%>

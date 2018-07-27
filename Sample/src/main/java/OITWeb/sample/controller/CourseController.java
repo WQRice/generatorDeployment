@@ -14,16 +14,10 @@ import java.util.List;
 public class CourseController {
 
     @Autowired
-    StudentRepository studentRepository;
-
-    @Autowired
-    CourseRepository courseRepository;
-
-    @Autowired
     ProfessorRepository professorRepository;
 
     @Autowired
-    OfficeRepository officeRepository;
+    CourseRepository courseRepository;
 
     //get all entitys
     //@CrossOrigin
@@ -53,6 +47,7 @@ public class CourseController {
     public Course updateCourse(@PathVariable(value="id") Long id, @Valid @RequestBody Course entityDetail){
         Course entity=courseRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Course","id",id));
         entity.setClassroom(entityDetail.getClassroom());
+        entity.setCourseNum(entityDetail.getCourseNum());
 		Course updateCourse=courseRepository.save(entity);
         return updateCourse;
     }
@@ -76,21 +71,6 @@ public class CourseController {
         return ResponseEntity.ok().build();
     }
 
-    //associate Course and Student
-    //@CrossOrigin
-    @PostMapping("/Course/{id1}/Student/{id2}")
-    public ResponseEntity<?> associateCourseStudent(@PathVariable(value="id1") Long id1, @PathVariable(value="id2") Long id2){
-        Course courseEntity=courseRepository.findById(id1).orElseThrow(()->new ResourceNotFoundException("Student","id",id1));
-        Student studentEntity=studentRepository.findById(id2).orElseThrow(()->new ResourceNotFoundException("Student","id",id2));
-        if(!courseEntity.getStudentInCourse().contains(studentEntity))
-            courseEntity.getStudentInCourse().add(studentEntity);
-        if(!studentEntity.getCourseInStudent().contains(courseEntity))
-            studentEntity.getCourseInStudent().add(courseEntity);
-        courseRepository.save(courseEntity);
-        studentRepository.save(studentEntity);
-        return ResponseEntity.ok().build();
-    }
-
     //Delete entity profile
     //@CrossOrigin
     @DeleteMapping("/Course/{id}")
@@ -100,11 +80,6 @@ public class CourseController {
         for(Professor entity:professorList){
             entity.getCourseInProfessor().remove(courseEntity);
             professorRepository.save(entity);
-        }
-        List<Student> studentList=studentRepository.findByCourseInStudent(courseEntity);
-        for(Student entity:studentList){
-            entity.getCourseInStudent().remove(courseEntity);
-            studentRepository.save(entity);
         }
         courseRepository.delete(courseEntity);
         return ResponseEntity.ok().build();

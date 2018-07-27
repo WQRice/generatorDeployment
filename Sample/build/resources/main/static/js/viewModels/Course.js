@@ -15,7 +15,7 @@ function(oj, ko, $)
       //
 
       self.oneArray = ["Professor"];
-      self.manyArray = ["Student"];
+      self.manyArray = [];
 
       self.attMap = {
     "Professor": {
@@ -24,13 +24,6 @@ function(oj, ko, $)
         "attInSelfName": "professorInCourse",
         "selfInAttName": "courseInProfessor",
         "inputColumnArray": "inputProfessorColumnArray"
-    },
-    "Student": {
-        "oneOrMany": "many",
-        "inputAttRef": "inputCourseStudentArray",
-        "attInSelfName": "studentInCourse",
-        "selfInAttName": "courseInStudent",
-        "inputColumnArray": "inputStudentColumnArray"
     }
 };
 
@@ -67,8 +60,9 @@ function(oj, ko, $)
 
                               'Course_Id': extractedData[i].id,
 
-                                                                                                          
-                       'Course_classroom': extractedData[i].classroom
+                       
+                      'Course_classroom': extractedData[i].classroom,                                                                                                          
+                       'Course_courseNum': extractedData[i].courseNum
               
                             };
 
@@ -163,8 +157,9 @@ function(oj, ko, $)
                       'id': Course.Course_Id,
 
 
-                                                                                                         
-                       'classroom': Course.Course_classroom         
+                      
+                      'classroom': Course.Course_classroom,                                                                                                          
+                       'courseNum': Course.Course_courseNum         
                     }
                 );
 
@@ -185,6 +180,8 @@ function(oj, ko, $)
             {"headerText": "Course Id", "field": "Course_Id", "headerStyle": 'font-weight:bold'},
                   
                     {"headerText": "Course classroom", "field": "Course_classroom", "headerStyle": 'font-weight:bold'},
+                 
+                    {"headerText": "Course Number", "field": "Course_courseNum", "headerStyle": 'font-weight:bold'},
                  
 
                   

@@ -7,6 +7,7 @@ var fuzzy = require('fuzzy');
 
 var jpaList=[];
 var XMLPath;
+var outputPath;
 var buildLater='No';
 
 function searchJpas(answers, input) {
@@ -40,7 +41,7 @@ module.exports = class extends Generator {
             type    : 'input',
             name    : 'XMLPath',
             message : 'What is the path of your XML files directory:',
-            default : './', // Default to current folder
+            default : '.', // Default to current folder
             store   : true
         }]).then((answers) => {
             XMLPath=answers.XMLPath.trim();
@@ -78,11 +79,12 @@ module.exports = class extends Generator {
             choices : ['Yes','No'],
             store   : true
         }]).then((answers) => {
-            fs.removeSync('Sample');
-            fs.copySync('webStatic', 'Sample');
+            outputPath=answers.applicationName;
+            fs.removeSync(outputPath);
+            fs.copySync('webStatic', outputPath);
             var datas = parser(XMLPath+'/'+answers.jpaFile,answers.packageName,answers.applicationName);
-            p2j(datas);
-            p2f(datas);
+            p2j(datas,outputPath);
+            p2f(datas,outputPath);
             buildLater=answers.executeLater;
     });
     }
@@ -91,7 +93,7 @@ module.exports = class extends Generator {
         if(buildLater=='Yes'){
             var gradleBuild=require('../../module/gradleBuild');
             //This might only be used in MAC/Linux system. Build and run the generated application
-            gradleBuild(this);
+            gradleBuild(this,outputPath);
         }
     }
 

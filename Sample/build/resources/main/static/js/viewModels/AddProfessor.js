@@ -41,17 +41,9 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 
         };
 
-        self.oneArray = ["Office"];
+        self.oneArray = [];
         self.manyArray = ["Course"];
         self.attMap = {
-    "Office": {
-        "oneOrMany": "one",
-        "inputAttRef": "inputProfessorOfficeArray",
-        "attInSelfName": "officeInProfessor",
-        "selfInAttName": "professorInOffice",
-        "inputColumnArray": "inputOfficeColumnArray",
-        "dropInputAttData": "drop_inputOfficeDataProvider"
-    },
     "Course": {
         "oneOrMany": "many",
         "inputAttRef": "inputProfessorCourseArray",
@@ -102,25 +94,6 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 
 
 
-    self.inputProfessorOfficeArray = ko.observableArray().extend({ deferred: true });
-    self.inputOfficeDataProvider = new oj.ArrayDataProvider(self.inputProfessorOfficeArray, {keyAttributes: 'id'});
-
-self.inputOfficeColumnArray = [
-
-{"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold;  Height:8px; background-color: white'},
-
-    {
-    "headerText": "building",
-    "field" : "building",
-    "headerStyle" : 'font-weight:bold;Height:8px; background-color: white'
-    }
-];
-
-
-
-
-
-
 
         self.attObservableArray = ko.observableArray();
 
@@ -146,6 +119,12 @@ self.inputOfficeColumnArray = [
                 {
         "headerText": "classroom",
         "field" : "classroom",
+        "headerStyle" : 'font-weight:bold;Height:8px; background-color: white'
+        }
+                ,
+                        {
+        "headerText": "courseNum",
+        "field" : "courseNum",
         "headerStyle" : 'font-weight:bold;Height:8px; background-color: white'
         }
                         ];

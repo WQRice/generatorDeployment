@@ -75,6 +75,25 @@ and open the template in the editor.
 
                         </div>
                     </div>
+                                                                                    
+                    <div class="oj-flex oj-flex-items-pad" style ="margin-top: 10px">
+                        <div class="oj-flex-item deprecated-col-default-width ">
+                            <oj-label for="CoursecourseNumInput"  style = "font-size: 16px"
+
+                                    
+                            >Course Number</oj-label>
+
+                        </div>
+                        <div class="oj-flex-item deprecated-col-default-width">
+                            <oj-input-number id="CoursecourseNumInput" value="{{inputCoursecourseNum}}"
+
+
+                                
+                                                                min="1"                                                            >
+                            </oj-input-number>
+
+                        </div>
+                    </div>
                             
 
 
@@ -130,54 +149,6 @@ and open the template in the editor.
                             
                             <!--for multiple select relations-->
 
-                            
-
-
-                            <div style ="margin-top: 15px">
-                            </div>
-
-                            <div class="oj-flex oj-flex-items-pad">
-
-                                <div class="oj-flex-item deprecated-col-default-width">
-                                    <oj-label for="modalStudentTable" style = "font-size: 16px" >Select Student </oj-label>
-                                </div>
-
-                            </div>
-                            <div class="oj-flex-item deprecated-col-default-width" style = "margin-left: 8px">
-
-                                <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-5">
-                                    <div class="oj-flex oj-flex-items-pad">
-                                        <oj-button id="editStudent" class="oj-button-sm"
-                                                   style = "margin-right: 2px"
-                                                   data-bind="click: function() {selectAttributeinEditDialog($element.id); }">
-                                            <span slot='startIcon' class="icon-pencil demo-icon-font-18" ></span>
-
-                                            <span>Select</span>
-                                        </oj-button>
-                                        <oj-button id="clearStudent" class="oj-button-sm"
-                                                   data-bind="click: function() {clearSelectedAtt($element.id);}">
-                                            <span slot='startIcon' class="icon-close demo-icon-font-18" ></span>
-
-                                            <span>Clear</span>
-                                        </oj-button>
-
-
-                                        <!--on-current-row-changed="[[currentRowListener]]"-->
-
-                                    </div>
-                                    <div class="oj-flex oj-flex-items-pad">
-                                        <oj-table id="modalStudentTable"
-                                                  data='[[inputStudentDataProvider]]'
-                                                  display='grid'
-                                                  columns-default='{"sortable": "enabled"}'
-                                                  columns='{{inputStudentColumnArray}}'
-                                                  style='width: 100%; height:100%;'>
-                                        </oj-table>
-                                    </div>
-
-
-                                </div>
-                            </div>
                             
 
 

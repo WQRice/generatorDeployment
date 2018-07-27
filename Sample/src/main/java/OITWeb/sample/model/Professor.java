@@ -31,14 +31,13 @@ public class Professor implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
         
+    @NotNull
 	private String firstName;
 
+    @NotNull
 	private String lastName;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	private List<Course> courseInProfessor=new ArrayList<Course>();
-
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-	private Office officeInProfessor;
 
 }

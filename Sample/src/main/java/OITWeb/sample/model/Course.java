@@ -33,8 +33,8 @@ public class Course implements Serializable{
         
 	private String classroom;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-	private List<Student> studentInCourse=new ArrayList<Student>();
+    @Min(1)
+	private int courseNum;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	private Professor professorInCourse;

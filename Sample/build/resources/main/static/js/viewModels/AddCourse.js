@@ -22,6 +22,8 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
         
         self.inputCourseclassroom(null);
         
+        self.inputCoursecourseNum(null);
+        
 
             for (var property in self.attMap){
                 if(self.attMap.hasOwnProperty(property)){
@@ -40,7 +42,7 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
         };
 
         self.oneArray = ["Professor"];
-        self.manyArray = ["Student"];
+        self.manyArray = [];
         self.attMap = {
     "Professor": {
         "oneOrMany": "one",
@@ -49,13 +51,6 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
         "selfInAttName": "courseInProfessor",
         "inputColumnArray": "inputProfessorColumnArray",
         "dropInputAttData": "drop_inputProfessorDataProvider"
-    },
-    "Student": {
-        "oneOrMany": "many",
-        "inputAttRef": "inputCourseStudentArray",
-        "attInSelfName": "studentInCourse",
-        "selfInAttName": "courseInStudent",
-        "inputColumnArray": "inputStudentColumnArray"
     }
 };
 
@@ -89,6 +84,8 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 
         
         self.inputCourseclassroom = ko.observable();
+        
+        self.inputCoursecourseNum = ko.observable();
         
 
 
@@ -137,32 +134,6 @@ self.inputProfessorColumnArray = [
 
 
 
-        
-        self.inputCourseStudentArray = ko.observableArray().extend({ deferred: true });
-        self.inputStudentDataProvider = new oj.ArrayDataProvider(self.inputCourseStudentArray, {keyAttributes: 'id'});
-
-        self.inputStudentColumnArray = [
-
-        {"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold;  Height:8px; background-color: white'},
-
-                {
-        "headerText": "studentId",
-        "field" : "studentId",
-        "headerStyle" : 'font-weight:bold;Height:8px; background-color: white'
-        }
-                ,
-                        {
-        "headerText": "firstName",
-        "field" : "firstName",
-        "headerStyle" : 'font-weight:bold;Height:8px; background-color: white'
-        }
-                ,
-                        {
-        "headerText": "lastName",
-        "field" : "lastName",
-        "headerStyle" : 'font-weight:bold;Height:8px; background-color: white'
-        }
-                        ];
         
 
 
@@ -559,6 +530,8 @@ self.inputProfessorColumnArray = [
             
             elementArray.push(document.getElementById("CourseclassroomInput"));
             
+            elementArray.push(document.getElementById("CoursecourseNumInput"));
+            
 
 
 
@@ -606,6 +579,11 @@ self.inputProfessorColumnArray = [
 
         
         'classroom' : self.inputCourseclassroom()
+        
+        ,
+        
+        
+        'courseNum' : self.inputCoursecourseNum()
         
         
 

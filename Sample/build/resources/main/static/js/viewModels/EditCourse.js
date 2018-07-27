@@ -29,6 +29,8 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojcheckboxset'
 
 self.inputCourseclassroom(rootViewModel.frontToEditData().classroom);
 
+self.inputCoursecourseNum(rootViewModel.frontToEditData().courseNum);
+
 
             //input into the professor table in pop-up modial
 
@@ -73,7 +75,7 @@ self.inputCourseclassroom(rootViewModel.frontToEditData().classroom);
 
 self.oneArray = ["Professor"];
 
-self.manyArray = ["Student"];
+self.manyArray = [];
 
 self.attMap = {
     "Professor": {
@@ -82,13 +84,6 @@ self.attMap = {
         "attInSelfName": "professorInCourse",
         "selfInAttName": "courseInProfessor",
         "inputColumnArray": "inputProfessorColumnArray"
-    },
-    "Student": {
-        "oneOrMany": "many",
-        "inputAttRef": "inputCourseStudentArray",
-        "attInSelfName": "studentInCourse",
-        "selfInAttName": "courseInStudent",
-        "inputColumnArray": "inputStudentColumnArray"
     }
 };
 
@@ -122,6 +117,8 @@ self.attMap = {
 
 
 self.inputCourseclassroom = ko.observable();
+
+self.inputCoursecourseNum = ko.observable();
 
 
 // for  one array (many to one or one to one)
@@ -171,32 +168,6 @@ self.inputProfessorColumnArray = [
 // for  many array (one to many or many to many)
 
 
-
-self.inputCourseStudentArray = ko.observableArray().extend({ deferred: true });
-self.inputStudentDataProvider = new oj.ArrayDataProvider(self.inputCourseStudentArray, {keyAttributes: 'id'});
-
-self.inputStudentColumnArray = [
-
-{"headerText": "id", "field": "id", "headerStyle": 'font-weight:bold'},
-
-{
-"headerText": "studentId",
-"field" : "studentId",
-"headerStyle" : 'font-weight:bold'
-}
-,
-{
-"headerText": "firstName",
-"field" : "firstName",
-"headerStyle" : 'font-weight:bold'
-}
-,
-{
-"headerText": "lastName",
-"field" : "lastName",
-"headerStyle" : 'font-weight:bold'
-}
-];
 
 
         self.selectAttColumnArray_multi = ko.observable();
@@ -607,6 +578,8 @@ self.inputStudentColumnArray = [
         
         elementArray.push(document.getElementById("CourseclassroomInput"));
         
+        elementArray.push(document.getElementById("CoursecourseNumInput"));
+        
 
 
 
@@ -645,6 +618,11 @@ self.inputStudentColumnArray = [
 
                         
                         'classroom' : self.inputCourseclassroom()
+                        
+                        ,
+                        
+                        
+                        'courseNum' : self.inputCoursecourseNum()
                         
                         
         }

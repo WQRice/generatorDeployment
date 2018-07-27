@@ -14,16 +14,10 @@ import java.util.List;
 public class ProfessorController {
 
     @Autowired
-    StudentRepository studentRepository;
-
-    @Autowired
-    CourseRepository courseRepository;
-
-    @Autowired
     ProfessorRepository professorRepository;
 
     @Autowired
-    OfficeRepository officeRepository;
+    CourseRepository courseRepository;
 
     //get all entitys
     //@CrossOrigin
@@ -58,29 +52,6 @@ public class ProfessorController {
         return updateProfessor;
     }
 
-    //associate Professor and Office
-    //@CrossOrigin
-    @PostMapping("/Professor/{id1}/Office/{id2}")
-    public ResponseEntity<?> associateProfessorOffice(@PathVariable(value="id1") Long id1, @PathVariable(value="id2") Long id2){
-        Professor professorEntity=professorRepository.findById(id1).orElseThrow(()->new ResourceNotFoundException("Office","id",id1));
-        Office officeEntity=officeRepository.findById(id2).orElseThrow(()->new ResourceNotFoundException("Office","id",id2));
-        if(professorEntity.getOfficeInProfessor()!=null){
-            Office old1=professorEntity.getOfficeInProfessor();
-            old1.setProfessorInOffice(null);
-            officeRepository.save(old1);
-        }
-        if(officeEntity.getProfessorInOffice()!=null){
-            Professor old2=officeEntity.getProfessorInOffice();
-            old2.setOfficeInProfessor(null);
-            professorRepository.save(old2);
-        }
-            officeEntity.setProfessorInOffice(professorEntity);
-        officeRepository.save(officeEntity);
-        professorEntity.setOfficeInProfessor(officeEntity);
-        professorRepository.save(professorEntity);
-        return ResponseEntity.ok().build();
-    }
-
     //associate Professor and Course
     //@CrossOrigin
     @PostMapping("/Professor/{id1}/Course/{id2}")
@@ -105,11 +76,6 @@ public class ProfessorController {
     @DeleteMapping("/Professor/{id}")
     public ResponseEntity<?> deleteProfessor(@PathVariable(value="id") Long id){
         Professor professorEntity=professorRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Professor","id",id));
-        List<Office> officeList=officeRepository.findByProfessorInOffice(professorEntity);
-        for(Office entity:officeList){
-            entity.setProfessorInOffice(null);
-            officeRepository.save(entity);
-        }
         List<Course> courseList=courseRepository.findByProfessorInCourse(professorEntity);
         for(Course entity:courseList){
             entity.setProfessorInCourse(null);
