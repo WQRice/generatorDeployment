@@ -4,6 +4,7 @@ var parser = require('../../module/XMLMultiEntityParser');
 var fs= require('fs-extra');
 var Generator = require('yeoman-generator');
 var fuzzy = require('fuzzy');
+var path = require('path');
 
 var jpaList=[];
 var XMLPath;
@@ -81,10 +82,11 @@ module.exports = class extends Generator {
         }]).then((answers) => {
             outputPath=answers.applicationName;
             fs.removeSync(outputPath);
-            fs.copySync('webStatic', outputPath);
+            var packagePath = path.dirname(require.resolve("generator-rice-web-generator/package.json"));
+            fs.copySync(packagePath+'/webStatic', outputPath);
             var datas = parser(XMLPath+'/'+answers.jpaFile,answers.packageName,answers.applicationName);
-            p2j(datas,outputPath);
-            p2f(datas,outputPath);
+            p2j(datas,outputPath,packagePath);
+            p2f(datas,outputPath,packagePath);
             buildLater=answers.executeLater;
     });
     }
