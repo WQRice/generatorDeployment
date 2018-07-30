@@ -82,11 +82,11 @@ module.exports = class extends Generator {
         }]).then((answers) => {
             outputPath=answers.applicationName;
             fs.removeSync(outputPath);
-            var packagePath = path.dirname(require.resolve("generator-rice-web-generator/package.json"));
-            fs.copySync(packagePath+'/webStatic', outputPath);
+            var modulePath = path.dirname(require.resolve("generator-rice-web-generator/package.json"));
+            fs.copySync(modulePath+'/webStatic', outputPath);
             var datas = parser(XMLPath+'/'+answers.jpaFile,answers.packageName,answers.applicationName);
-            p2j(datas,outputPath,packagePath);
-            p2f(datas,outputPath,packagePath);
+            p2j(datas,outputPath,modulePath);
+            p2f(datas,outputPath,modulePath);
             buildLater=answers.executeLater;
     });
     }
