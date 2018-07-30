@@ -16,7 +16,6 @@ module.exports = function (jpaFile, packageName, appName) {
     parseString(xml, function (err, result) {
 
         // console.log(util.inspect(result, false, null));
-        console.log('where');
 
         //get needed data from XML
         for (var i in result[jpaRoot]['jpa:entity']) {
