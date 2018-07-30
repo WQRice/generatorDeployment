@@ -18,27 +18,12 @@ public class <%-CLASSNAME%>Controller {
     <%-IdToEntity[i]%>Repository <%-caseConvert.downFirst(IdToEntity[i])%>Repository;
 <%}-%>
 
-    //get all entitys
-    //@CrossOrigin
-    //@GetMapping("/<%-CLASSNAME%>")
-    //public List<<%-CLASSNAME%>> getAll<%-CLASSNAME%>s(){
-    //    return <%-caseConvert.downFirst(CLASSNAME)%>Repository.findAll();
-    //}
-
     //create entity profile
     //@CrossOrigin
     @PostMapping("/<%-CLASSNAME%>")
     public <%=CLASSNAME%> create<%=CLASSNAME%>(@Valid @RequestBody <%=CLASSNAME%> entity){
         return <%=caseConvert.downFirst(CLASSNAME)%>Repository.save(entity);
     }
-
-    //get entity by id
-    //@CrossOrigin
-    //@GetMapping("/<%-CLASSNAME%>/{id}")
-    //public <%-CLASSNAME%> get<%-CLASSNAME%>ById(@PathVariable(value="id") Long id){
-    //   return <%-caseConvert.downFirst(CLASSNAME)%>Repository.findById(id)
-    //            .orElseThrow(()->new ResourceNotFoundException("<%-CLASSNAME%>","id",id));
-    //}
 
     //update profile
     //@CrossOrigin

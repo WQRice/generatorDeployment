@@ -15,7 +15,7 @@ module.exports = function (jpaFile, packageName, appName) {
 
     parseString(xml, function (err, result) {
 
-        console.log(util.inspect(result, false, null));
+        // console.log(util.inspect(result, false, null));
 
         //get needed data from XML
         for (var i in result[jpaRoot]['jpa:entity']) {
@@ -36,7 +36,6 @@ module.exports = function (jpaFile, packageName, appName) {
             for (var j in basic) {
                 // console.log(basic[j]['$']['name'] + ' is of type ' + basic[j]['$']['attribute-type']);
             }
-            console.log();
 
             datas.push({
                 'PACKAGENAME': packageName,
