@@ -3,7 +3,6 @@ var ejs = require('ejs');
 var fs = require('fs-extra');
 // var util = require('util');
 
-// var parser = require('./XMLParser');
 
 module.exports = function (datas, outputPath, modulePath) {
 

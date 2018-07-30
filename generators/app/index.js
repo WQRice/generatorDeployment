@@ -12,7 +12,6 @@ var outputPath;
 var buildLater='No';
 
 function searchJpas(answers, input) {
-    // console.log('I am called');
     input = input || '';
     return new Promise(function(resolve) {
         setTimeout(function() {
@@ -34,7 +33,6 @@ module.exports = class extends Generator {
         this.option('babel'); // This method adds support for a `--babel` flag
 
         this.env.adapter.promptModule.registerPrompt('autoComplete', require('inquirer-autocomplete-prompt'));
-//     this.log(jpaList);
     }
 
     initializing() {
@@ -60,13 +58,13 @@ module.exports = class extends Generator {
             type    : 'input',
             name    : 'applicationName',
             message : 'Your application name:',
-            default : 'OwlsWeb', // Default to current folder name
+            default : 'OwlsWeb',
             store   : true
         }, {
             type    : 'input',
             name    : 'packageName',
             message : 'Your package name:',
-            default : 'sample', // Default to current folder name
+            default : 'sample',
             store   : true
         },{
             type    : 'autoComplete',
